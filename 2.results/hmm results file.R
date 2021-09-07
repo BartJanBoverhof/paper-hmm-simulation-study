@@ -1,0 +1,1976 @@
+###########################
+##### HMM Paper Code ######
+###########################
+
+##############################
+### Load packages and data ###
+##############################
+
+### Load packages.
+if(!require(data.table)) install.packages("data.table")
+if(!require(reshape)) install.packages("reshape")
+if(!require(ggplot2)) install.packages("ggplot2")
+if(!require(ggh4x)) install.packages("ggh4x")
+if(!require(plyr)) install.packages("plyr")
+library(data.table)
+library(reshape)
+library(ggplot2)
+library(ggh4x)
+library(plyr)
+
+### Set working directory. 
+setwd("D:\\Academia\\Paper HMM\\Data")
+
+### Function for assigning datasets to list.
+rda2list <- function(file) {
+  e <- new.env()
+  load(file, envir = e)
+  as.list(e)
+}
+
+### Loading in and assigning datasets to list. 
+files <- list.files(pattern = ".rda$")
+results <- Map(rda2list, file.path(files))
+names(results) <- tools::file_path_sans_ext(files)
+
+##########################################################
+### Theta / Gamma ; Clear / Moderately Clear / Unclear ###
+##########################################################
+
+### Theta.
+
+## Clear. 
+clear_true <- c(0.92, 0.02, 0.02, 0.02, 0.02,
+                0.02, 0.47, 0.47, 0.02, 0.02,
+                0.02, 0.02, 0.02, 0.47, 0.47)
+bias_theta_cl_obs_5_t_250 <- sweep(results$sim_HMM_theta_cl_obs_5_t_250$out_sim$emiss_mean, 2,  
+                                   clear_true)
+bias_theta_cl_obs_5_t_500 <- sweep(results$sim_HMM_theta_cl_obs_5_t_500$out_sim$emiss_mean, 2,
+                                   clear_true)
+bias_theta_cl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_cl_obs_5_t_1000$out_sim$emiss_mean, 2, 
+                                    clear_true)
+bias_theta_cl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_cl_obs_5_t_2000$out_sim$emiss_mean, 2,
+                                    clear_true)
+bias_theta_cl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_cl_obs_5_t_4000$out_sim$emiss_mean, 2,
+                                    clear_true)
+bias_theta_cl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_cl_obs_5_t_8000$out_sim$emiss_mean, 2,
+                                    clear_true)
+
+bias_theta_cl_obs_5_t_250 <- melt(bias_theta_cl_obs_5_t_250)
+colnames(bias_theta_cl_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_cl_obs_5_t_500 <- melt(bias_theta_cl_obs_5_t_500)
+colnames(bias_theta_cl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_cl_obs_5_t_1000 <- melt(bias_theta_cl_obs_5_t_1000)
+colnames(bias_theta_cl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_cl_obs_5_t_2000 <- melt(bias_theta_cl_obs_5_t_2000)
+colnames(bias_theta_cl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_cl_obs_5_t_4000 <- melt(bias_theta_cl_obs_5_t_4000)
+colnames(bias_theta_cl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_cl_obs_5_t_8000 <- melt(bias_theta_cl_obs_5_t_8000)
+colnames(bias_theta_cl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_theta_cl_obs_5_t_250 <- cbind(bias_theta_cl_obs_5_t_250, Length = "250", Clarity = "Clear")
+bias_theta_cl_obs_5_t_500 <- cbind(bias_theta_cl_obs_5_t_500, Length = "500", Clarity = "Clear")
+bias_theta_cl_obs_5_t_1000 <- cbind(bias_theta_cl_obs_5_t_1000, Length = "1000", Clarity = "Clear")
+bias_theta_cl_obs_5_t_2000 <- cbind(bias_theta_cl_obs_5_t_2000, Length = "2000", Clarity = "Clear")
+bias_theta_cl_obs_5_t_4000 <- cbind(bias_theta_cl_obs_5_t_4000, Length = "4000", Clarity = "Clear")
+bias_theta_cl_obs_5_t_8000 <- cbind(bias_theta_cl_obs_5_t_8000, Length = "8000", Clarity = "Clear")
+
+cl_obs_5_theta <- rbind(data.frame(bias_theta_cl_obs_5_t_250), data.frame(bias_theta_cl_obs_5_t_500),  
+                        data.frame(bias_theta_cl_obs_5_t_1000), data.frame(bias_theta_cl_obs_5_t_2000), 
+                        data.frame(bias_theta_cl_obs_5_t_4000), data.frame(bias_theta_cl_obs_5_t_8000))
+cl_obs_5_theta$Length <- factor(cl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+cl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Clarity, cl_obs_5_theta, mean)
+
+## Moderately clear. 
+mod_true <- c(0.68, 0.08, 0.08, 0.08, 0.08,
+              0.08, 0.38, 0.38, 0.08, 0.08,
+              0.08, 0.08, 0.08, 0.38, 0.38)
+bias_theta_modcl_obs_5_t_250 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_250$out_sim$emiss_mean, 2, 
+                                      mod_true)
+bias_theta_modcl_obs_5_t_500 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_500$out_sim$emiss_mean, 2, 
+                                      mod_true)
+bias_theta_modcl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_1000$out_sim$emiss_mean, 2,
+                                       mod_true)
+bias_theta_modcl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_2000$out_sim$emiss_mean, 2, 
+                                       mod_true)
+bias_theta_modcl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_4000$out_sim$emiss_mean, 2, 
+                                       mod_true)
+bias_theta_modcl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_8000$out_sim$emiss_mean, 2, 
+                                       mod_true)
+
+bias_theta_modcl_obs_5_t_250 <- melt(bias_theta_modcl_obs_5_t_250)
+colnames(bias_theta_modcl_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modcl_obs_5_t_500 <- melt(bias_theta_modcl_obs_5_t_500)
+colnames(bias_theta_modcl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modcl_obs_5_t_1000 <- melt(bias_theta_modcl_obs_5_t_1000)
+colnames(bias_theta_modcl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modcl_obs_5_t_2000 <- melt(bias_theta_modcl_obs_5_t_2000)
+colnames(bias_theta_modcl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modcl_obs_5_t_4000 <- melt(bias_theta_modcl_obs_5_t_4000)
+colnames(bias_theta_modcl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modcl_obs_5_t_8000 <- melt(bias_theta_modcl_obs_5_t_8000)
+colnames(bias_theta_modcl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_theta_modcl_obs_5_t_250 <- cbind(bias_theta_modcl_obs_5_t_250, Length = "250", Clarity = "Moderate")
+bias_theta_modcl_obs_5_t_500 <- cbind(bias_theta_modcl_obs_5_t_500, Length = "500", Clarity = "Moderate")
+bias_theta_modcl_obs_5_t_1000 <- cbind(bias_theta_modcl_obs_5_t_1000, Length = "1000", Clarity = "Moderate")
+bias_theta_modcl_obs_5_t_2000 <- cbind(bias_theta_modcl_obs_5_t_2000, Length = "2000", Clarity = "Moderate")
+bias_theta_modcl_obs_5_t_4000 <- cbind(bias_theta_modcl_obs_5_t_4000, Length = "4000", Clarity = "Moderate")
+bias_theta_modcl_obs_5_t_8000 <- cbind(bias_theta_modcl_obs_5_t_8000, Length = "8000", Clarity = "Moderate")
+
+modcl_obs_5_theta <- rbind(data.frame(bias_theta_modcl_obs_5_t_250), data.frame(bias_theta_modcl_obs_5_t_500),  
+                           data.frame(bias_theta_modcl_obs_5_t_1000), data.frame(bias_theta_modcl_obs_5_t_2000), 
+                           data.frame(bias_theta_modcl_obs_5_t_4000), data.frame(bias_theta_modcl_obs_5_t_8000))
+modcl_obs_5_theta$Length <- factor(modcl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+modcl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Clarity, modcl_obs_5_theta, mean)
+
+## Unclear. 
+unclear_true <- c(0.44, 0.14, 0.14, 0.14, 0.14,
+                  0.14, 0.29, 0.29, 0.14, 0.14,
+                  0.14, 0.14, 0.14, 0.29, 0.29)
+bias_theta_uncl_obs_5_t_250 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_250$out_sim$emiss_mean, 2, 
+                                     unclear_true)
+bias_theta_uncl_obs_5_t_500 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_500$out_sim$emiss_mean, 2,
+                                     unclear_true)
+bias_theta_uncl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_1000$out_sim$emiss_mean, 2, 
+                                      unclear_true)
+bias_theta_uncl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_2000$out_sim$emiss_mean, 2, 
+                                      unclear_true)
+bias_theta_uncl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_4000$out_sim$emiss_mean, 2, 
+                                      unclear_true)
+bias_theta_uncl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_8000$out_sim$emiss_mean, 2, 
+                                      unclear_true)
+
+bias_theta_uncl_obs_5_t_250 <- melt(bias_theta_uncl_obs_5_t_250)
+colnames(bias_theta_uncl_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_500 <- melt(bias_theta_uncl_obs_5_t_500)
+colnames(bias_theta_uncl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_1000 <- melt(bias_theta_uncl_obs_5_t_1000)
+colnames(bias_theta_uncl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_2000 <- melt(bias_theta_uncl_obs_5_t_2000)
+colnames(bias_theta_uncl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_4000 <- melt(bias_theta_uncl_obs_5_t_4000)
+colnames(bias_theta_uncl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_8000 <- melt(bias_theta_uncl_obs_5_t_8000)
+colnames(bias_theta_uncl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_theta_uncl_obs_5_t_250 <- cbind(bias_theta_uncl_obs_5_t_250, Length = "250", Clarity = "Unclear")
+bias_theta_uncl_obs_5_t_500 <- cbind(bias_theta_uncl_obs_5_t_500, Length = "500", Clarity = "Unclear")
+bias_theta_uncl_obs_5_t_1000 <- cbind(bias_theta_uncl_obs_5_t_1000, Length = "1000", Clarity = "Unclear")
+bias_theta_uncl_obs_5_t_2000 <- cbind(bias_theta_uncl_obs_5_t_2000, Length = "2000", Clarity = "Unclear")
+bias_theta_uncl_obs_5_t_4000 <- cbind(bias_theta_uncl_obs_5_t_4000, Length = "4000", Clarity = "Unclear")
+bias_theta_uncl_obs_5_t_8000 <- cbind(bias_theta_uncl_obs_5_t_8000, Length = "8000", Clarity = "Unclear")
+
+uncl_obs_5_theta <- rbind(data.frame(bias_theta_uncl_obs_5_t_250), data.frame(bias_theta_uncl_obs_5_t_500),  
+                          data.frame(bias_theta_uncl_obs_5_t_1000), data.frame(bias_theta_uncl_obs_5_t_2000), 
+                          data.frame(bias_theta_uncl_obs_5_t_4000), data.frame(bias_theta_uncl_obs_5_t_8000))
+uncl_obs_5_theta$Length <- factor(uncl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+uncl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Clarity, uncl_obs_5_theta, mean)
+
+obs_5_theta <- rbind(data.frame(cl_obs_5_theta), data.frame(modcl_obs_5_theta),  
+                     data.frame(uncl_obs_5_theta))
+obs_5_theta$Clarity <- factor(obs_5_theta$Clarity, levels = c("Clear", "Moderate", "Unclear"))
+
+## Plot.
+ggplot(obs_5_theta, aes(x = Length, y = Abs_bias, color = Clarity, group = Clarity)) +
+  facet_wrap(facets = vars(S_to_obs), nrow = 3, ncol = 5) +
+  geom_point() + geom_line() +  
+  ggtitle("Bias emission probabilities by clarity and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Bias") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+## Standard deviation.
+
+# Clear.
+sd_theta_cl_obs_5_t_250 <- melt(results$sim_HMM_theta_cl_obs_5_t_250$out_sim$emiss_sd)
+colnames(sd_theta_cl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_theta_cl_obs_5_t_500 <- melt(results$sim_HMM_theta_cl_obs_5_t_500$out_sim$emiss_sd)
+colnames(sd_theta_cl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_theta_cl_obs_5_t_1000 <- melt(results$sim_HMM_theta_cl_obs_5_t_1000$out_sim$emiss_sd)
+colnames(sd_theta_cl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_theta_cl_obs_5_t_2000 <- melt(results$sim_HMM_theta_cl_obs_5_t_2000$out_sim$emiss_sd)
+colnames(sd_theta_cl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_theta_cl_obs_5_t_4000 <- melt(results$sim_HMM_theta_cl_obs_5_t_4000$out_sim$emiss_sd)
+colnames(sd_theta_cl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_theta_cl_obs_5_t_8000 <- melt(results$sim_HMM_theta_cl_obs_5_t_8000$out_sim$emiss_sd)
+colnames(sd_theta_cl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_theta_cl_obs_5_t_250 <- cbind(sd_theta_cl_obs_5_t_250, Length = "250", Clarity = "Clear")
+sd_theta_cl_obs_5_t_500 <- cbind(sd_theta_cl_obs_5_t_500, Length = "500", Clarity = "Clear")
+sd_theta_cl_obs_5_t_1000 <- cbind(sd_theta_cl_obs_5_t_1000, Length = "1000", Clarity = "Clear")
+sd_theta_cl_obs_5_t_2000 <- cbind(sd_theta_cl_obs_5_t_2000, Length = "2000", Clarity = "Clear")
+sd_theta_cl_obs_5_t_4000 <- cbind(sd_theta_cl_obs_5_t_4000, Length = "4000", Clarity = "Clear")
+sd_theta_cl_obs_5_t_8000 <- cbind(sd_theta_cl_obs_5_t_8000, Length = "8000", Clarity = "Clear")
+
+sd_cl_obs_5_theta <- rbind(data.frame(sd_theta_cl_obs_5_t_250), data.frame(sd_theta_cl_obs_5_t_500),  
+                           data.frame(sd_theta_cl_obs_5_t_1000), data.frame(sd_theta_cl_obs_5_t_2000), 
+                           data.frame(sd_theta_cl_obs_5_t_4000), data.frame(sd_theta_cl_obs_5_t_8000))
+sd_cl_obs_5_theta$Length <- factor(sd_cl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_cl_obs_5_theta <- aggregate(Sd ~ Length + S_to_s + Clarity, sd_cl_obs_5_theta, mean)
+
+# Moderately clear. 
+sd_theta_modcl_obs_5_t_250 <- melt(results$sim_HMM_theta_modcl_obs_5_t_250$out_sim$emiss_sd)
+colnames(sd_theta_modcl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_theta_modcl_obs_5_t_500 <- melt(results$sim_HMM_theta_modcl_obs_5_t_500$out_sim$emiss_sd)
+colnames(sd_theta_modcl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_theta_modcl_obs_5_t_1000 <- melt(results$sim_HMM_theta_modcl_obs_5_t_1000$out_sim$emiss_sd)
+colnames(sd_theta_modcl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_theta_modcl_obs_5_t_2000 <- melt(results$sim_HMM_theta_modcl_obs_5_t_2000$out_sim$emiss_sd)
+colnames(sd_theta_modcl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_theta_modcl_obs_5_t_4000 <- melt(results$sim_HMM_theta_modcl_obs_5_t_4000$out_sim$emiss_sd)
+colnames(sd_theta_modcl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_theta_modcl_obs_5_t_8000 <- melt(results$sim_HMM_theta_modcl_obs_5_t_8000$out_sim$emiss_sd)
+colnames(sd_theta_modcl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_theta_modcl_obs_5_t_250 <- cbind(sd_theta_modcl_obs_5_t_250, Length = "250", Clarity = "Moderate")
+sd_theta_modcl_obs_5_t_500 <- cbind(sd_theta_modcl_obs_5_t_500, Length = "500", Clarity = "Moderate")
+sd_theta_modcl_obs_5_t_1000 <- cbind(sd_theta_modcl_obs_5_t_1000, Length = "1000", Clarity = "Moderate")
+sd_theta_modcl_obs_5_t_2000 <- cbind(sd_theta_modcl_obs_5_t_2000, Length = "2000", Clarity = "Moderate")
+sd_theta_modcl_obs_5_t_4000 <- cbind(sd_theta_modcl_obs_5_t_4000, Length = "4000", Clarity = "Moderate")
+sd_theta_modcl_obs_5_t_8000 <- cbind(sd_theta_modcl_obs_5_t_8000, Length = "8000", Clarity = "Moderate")
+
+sd_modcl_obs_5_theta <- rbind(data.frame(sd_theta_modcl_obs_5_t_250), data.frame(sd_theta_modcl_obs_5_t_500),  
+                              data.frame(sd_theta_modcl_obs_5_t_1000), data.frame(sd_theta_modcl_obs_5_t_2000), 
+                              data.frame(sd_theta_modcl_obs_5_t_4000), data.frame(sd_theta_modcl_obs_5_t_8000))
+sd_modcl_obs_5_theta$Length <- factor(sd_modcl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_modcl_obs_5_theta <- aggregate(Sd ~ Length + S_to_s + Clarity, sd_modcl_obs_5_theta, mean)
+
+# Unclear. 
+sd_theta_uncl_obs_5_t_250 <- melt(results$sim_HMM_theta_uncl_obs_5_t_250$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_theta_uncl_obs_5_t_500 <- melt(results$sim_HMM_theta_uncl_obs_5_t_500$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_theta_uncl_obs_5_t_1000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_1000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_theta_uncl_obs_5_t_2000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_2000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_theta_uncl_obs_5_t_4000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_4000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_theta_uncl_obs_5_t_8000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_8000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_theta_uncl_obs_5_t_250 <- cbind(sd_theta_uncl_obs_5_t_250, Length = "250", Clarity = "Unclear")
+sd_theta_uncl_obs_5_t_500 <- cbind(sd_theta_uncl_obs_5_t_500, Length = "500", Clarity = "Unclear")
+sd_theta_uncl_obs_5_t_1000 <- cbind(sd_theta_uncl_obs_5_t_1000, Length = "1000", Clarity = "Unclear")
+sd_theta_uncl_obs_5_t_2000 <- cbind(sd_theta_uncl_obs_5_t_2000, Length = "2000", Clarity = "Unclear")
+sd_theta_uncl_obs_5_t_4000 <- cbind(sd_theta_uncl_obs_5_t_4000, Length = "4000", Clarity = "Unclear")
+sd_theta_uncl_obs_5_t_8000 <- cbind(sd_theta_uncl_obs_5_t_8000, Length = "8000", Clarity = "Unclear")
+
+sd_uncl_obs_5_theta <- rbind(data.frame(sd_theta_uncl_obs_5_t_250), data.frame(sd_theta_uncl_obs_5_t_500),  
+                             data.frame(sd_theta_uncl_obs_5_t_1000), data.frame(sd_theta_uncl_obs_5_t_2000), 
+                             data.frame(sd_theta_uncl_obs_5_t_4000), data.frame(sd_theta_uncl_obs_5_t_8000))
+sd_uncl_obs_5_theta$Length <- factor(sd_uncl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_uncl_obs_5_theta <- aggregate(Sd ~ Length + S_to_s + Clarity, sd_uncl_obs_5_theta, mean)
+
+# Plot of standard deviation.
+sd_obs_5_theta <- rbind(data.frame(sd_cl_obs_5_theta), data.frame(sd_modcl_obs_5_theta),  
+                        data.frame(sd_uncl_obs_5_theta))
+sd_obs_5_theta$Clarity <- factor(sd_obs_5_theta$Clarity, levels = c("Clear", "Moderate", "Unclear"))
+ggplot(sd_obs_5_theta, aes(x = Length, y = Sd, color = Clarity, group = Clarity)) +
+  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 5) +
+  geom_point() + geom_line() +  
+  ggtitle("Standard deviation emission probabilities by clarity and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Standard deviation") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+### Gamma 
+
+## Mean
+
+gamma_clear_true <- c(0.80, 0.10, 0.10, 
+                      0.10, 0.80, 0.10, 
+                      0.10, 0.10, 0.80)
+# Clear. 
+bias_gamma_cl_obs_5_t_250 <- sweep(results$sim_HMM_theta_cl_obs_5_t_250$out_sim$gamma_mean, 2,  
+                                   gamma_clear_true)
+bias_gamma_cl_obs_5_t_500 <- sweep(results$sim_HMM_theta_cl_obs_5_t_500$out_sim$gamma_mean, 2,
+                                   gamma_clear_true)
+bias_gamma_cl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_cl_obs_5_t_1000$out_sim$gamma_mean, 2, 
+                                    gamma_clear_true)
+bias_gamma_cl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_cl_obs_5_t_2000$out_sim$gamma_mean, 2,
+                                    gamma_clear_true)
+bias_gamma_cl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_cl_obs_5_t_4000$out_sim$gamma_mean, 2,
+                                    gamma_clear_true)
+bias_gamma_cl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_cl_obs_5_t_8000$out_sim$gamma_mean, 2,
+                                    gamma_clear_true)
+
+bias_gamma_cl_obs_5_t_250 <- melt(bias_gamma_cl_obs_5_t_250)
+colnames(bias_gamma_cl_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_cl_obs_5_t_500 <- melt(bias_gamma_cl_obs_5_t_500)
+colnames(bias_gamma_cl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_cl_obs_5_t_1000 <- melt(bias_gamma_cl_obs_5_t_1000)
+colnames(bias_gamma_cl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_cl_obs_5_t_2000 <- melt(bias_gamma_cl_obs_5_t_2000)
+colnames(bias_gamma_cl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_cl_obs_5_t_4000 <- melt(bias_gamma_cl_obs_5_t_4000)
+colnames(bias_gamma_cl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_cl_obs_5_t_8000 <- melt(bias_gamma_cl_obs_5_t_8000)
+colnames(bias_gamma_cl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_gamma_cl_obs_5_t_250 <- cbind(bias_gamma_cl_obs_5_t_250, Length = "250", Clarity = "Clear")
+bias_gamma_cl_obs_5_t_500 <- cbind(bias_gamma_cl_obs_5_t_500, Length = "500", Clarity = "Clear")
+bias_gamma_cl_obs_5_t_1000 <- cbind(bias_gamma_cl_obs_5_t_1000, Length = "1000", Clarity = "Clear")
+bias_gamma_cl_obs_5_t_2000 <- cbind(bias_gamma_cl_obs_5_t_2000, Length = "2000", Clarity = "Clear")
+bias_gamma_cl_obs_5_t_4000 <- cbind(bias_gamma_cl_obs_5_t_4000, Length = "4000", Clarity = "Clear")
+bias_gamma_cl_obs_5_t_8000 <- cbind(bias_gamma_cl_obs_5_t_8000, Length = "8000", Clarity = "Clear")
+
+cl_obs_5_gamma <- rbind(data.frame(bias_gamma_cl_obs_5_t_250), data.frame(bias_gamma_cl_obs_5_t_500),  
+                        data.frame(bias_gamma_cl_obs_5_t_1000), data.frame(bias_gamma_cl_obs_5_t_2000), 
+                        data.frame(bias_gamma_cl_obs_5_t_4000), data.frame(bias_gamma_cl_obs_5_t_8000))
+cl_obs_5_gamma$Length <- factor(cl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+cl_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_obs + Clarity, cl_obs_5_gamma, mean)
+
+# Moderately clear. 
+gamma_mod_true <- c(0.80, 0.10, 0.10, 
+                    0.10, 0.80, 0.10, 
+                    0.10, 0.10, 0.80)
+bias_gamma_modcl_obs_5_t_250 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_250$out_sim$gamma_mean, 2, 
+                                      gamma_mod_true)
+bias_gamma_modcl_obs_5_t_500 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_500$out_sim$gamma_mean, 2, 
+                                      gamma_mod_true)
+bias_gamma_modcl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_1000$out_sim$gamma_mean, 2,
+                                       gamma_mod_true)
+bias_gamma_modcl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_2000$out_sim$gamma_mean, 2, 
+                                       gamma_mod_true)
+bias_gamma_modcl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_4000$out_sim$gamma_mean, 2, 
+                                       gamma_mod_true)
+bias_gamma_modcl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_modcl_obs_5_t_8000$out_sim$gamma_mean, 2, 
+                                       gamma_mod_true)
+
+bias_gamma_modcl_obs_5_t_250 <- melt(bias_gamma_modcl_obs_5_t_250)
+colnames(bias_gamma_modcl_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_modcl_obs_5_t_500 <- melt(bias_gamma_modcl_obs_5_t_500)
+colnames(bias_gamma_modcl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_modcl_obs_5_t_1000 <- melt(bias_gamma_modcl_obs_5_t_1000)
+colnames(bias_gamma_modcl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_modcl_obs_5_t_2000 <- melt(bias_gamma_modcl_obs_5_t_2000)
+colnames(bias_gamma_modcl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_modcl_obs_5_t_4000 <- melt(bias_gamma_modcl_obs_5_t_4000)
+colnames(bias_gamma_modcl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_modcl_obs_5_t_8000 <- melt(bias_gamma_modcl_obs_5_t_8000)
+colnames(bias_gamma_modcl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_gamma_modcl_obs_5_t_250 <- cbind(bias_gamma_modcl_obs_5_t_250, Length = "250", Clarity = "Moderate")
+bias_gamma_modcl_obs_5_t_500 <- cbind(bias_gamma_modcl_obs_5_t_500, Length = "500", Clarity = "Moderate")
+bias_gamma_modcl_obs_5_t_1000 <- cbind(bias_gamma_modcl_obs_5_t_1000, Length = "1000", Clarity = "Moderate")
+bias_gamma_modcl_obs_5_t_2000 <- cbind(bias_gamma_modcl_obs_5_t_2000, Length = "2000", Clarity = "Moderate")
+bias_gamma_modcl_obs_5_t_4000 <- cbind(bias_gamma_modcl_obs_5_t_4000, Length = "4000", Clarity = "Moderate")
+bias_gamma_modcl_obs_5_t_8000 <- cbind(bias_gamma_modcl_obs_5_t_8000, Length = "8000", Clarity = "Moderate")
+
+modcl_obs_5_gamma <- rbind(data.frame(bias_gamma_modcl_obs_5_t_250), data.frame(bias_gamma_modcl_obs_5_t_500),  
+                           data.frame(bias_gamma_modcl_obs_5_t_1000), data.frame(bias_gamma_modcl_obs_5_t_2000), 
+                           data.frame(bias_gamma_modcl_obs_5_t_4000), data.frame(bias_gamma_modcl_obs_5_t_8000))
+modcl_obs_5_gamma$Length <- factor(modcl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+modcl_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_obs + Clarity, modcl_obs_5_gamma, mean)
+
+# Unclear. 
+gamma_unclear_true <- c(0.80, 0.10, 0.10, 
+                        0.10, 0.80, 0.10, 
+                        0.10, 0.10, 0.80)
+bias_gamma_uncl_obs_5_t_250 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_250$out_sim$gamma_mean, 2, 
+                                     gamma_unclear_true)
+bias_gamma_uncl_obs_5_t_500 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_500$out_sim$gamma_mean, 2,
+                                     gamma_unclear_true)
+bias_gamma_uncl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_1000$out_sim$gamma_mean, 2, 
+                                      gamma_unclear_true)
+bias_gamma_uncl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_2000$out_sim$gamma_mean, 2, 
+                                      gamma_unclear_true)
+bias_gamma_uncl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_4000$out_sim$gamma_mean, 2, 
+                                      gamma_unclear_true)
+bias_gamma_uncl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_8000$out_sim$gamma_mean, 2, 
+                                      gamma_unclear_true)
+
+bias_gamma_uncl_obs_5_t_250 <- melt(bias_gamma_uncl_obs_5_t_250)
+colnames(bias_gamma_uncl_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_uncl_obs_5_t_500 <- melt(bias_gamma_uncl_obs_5_t_500)
+colnames(bias_gamma_uncl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_uncl_obs_5_t_1000 <- melt(bias_gamma_uncl_obs_5_t_1000)
+colnames(bias_gamma_uncl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_uncl_obs_5_t_2000 <- melt(bias_gamma_uncl_obs_5_t_2000)
+colnames(bias_gamma_uncl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_uncl_obs_5_t_4000 <- melt(bias_gamma_uncl_obs_5_t_4000)
+colnames(bias_gamma_uncl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_gamma_uncl_obs_5_t_8000 <- melt(bias_gamma_uncl_obs_5_t_8000)
+colnames(bias_gamma_uncl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_gamma_uncl_obs_5_t_250 <- cbind(bias_gamma_uncl_obs_5_t_250, Length = "250", Clarity = "Unclear")
+bias_gamma_uncl_obs_5_t_500 <- cbind(bias_gamma_uncl_obs_5_t_500, Length = "500", Clarity = "Unclear")
+bias_gamma_uncl_obs_5_t_1000 <- cbind(bias_gamma_uncl_obs_5_t_1000, Length = "1000", Clarity = "Unclear")
+bias_gamma_uncl_obs_5_t_2000 <- cbind(bias_gamma_uncl_obs_5_t_2000, Length = "2000", Clarity = "Unclear")
+bias_gamma_uncl_obs_5_t_4000 <- cbind(bias_gamma_uncl_obs_5_t_4000, Length = "4000", Clarity = "Unclear")
+bias_gamma_uncl_obs_5_t_8000 <- cbind(bias_gamma_uncl_obs_5_t_8000, Length = "8000", Clarity = "Unclear")
+
+uncl_obs_5_gamma <- rbind(data.frame(bias_gamma_uncl_obs_5_t_250), data.frame(bias_gamma_uncl_obs_5_t_500),  
+                          data.frame(bias_gamma_uncl_obs_5_t_1000), data.frame(bias_gamma_uncl_obs_5_t_2000), 
+                          data.frame(bias_gamma_uncl_obs_5_t_4000), data.frame(bias_gamma_uncl_obs_5_t_8000))
+uncl_obs_5_gamma$Length <- factor(uncl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+uncl_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_obs + Clarity, uncl_obs_5_gamma, mean)
+
+# Plot of mean gamma.
+obs_5_gamma <- rbind(data.frame(cl_obs_5_gamma), data.frame(modcl_obs_5_gamma),  
+                     data.frame(uncl_obs_5_gamma))
+obs_5_gamma$Clarity <- factor(obs_5_gamma$Clarity, levels = c("Clear", "Moderate", "Unclear"))
+ggplot(obs_5_gamma, aes(x = Length, y = Abs_bias, color = Clarity, group = Clarity)) +
+  facet_wrap(facets = vars(S_to_obs), nrow = 3, ncol = 3) +
+  geom_point() + geom_line() +  
+  ggtitle("Bias transition probabilities by clarity and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Bias") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+## Standard deviation.
+
+# Clear.
+sd_gamma_cl_obs_5_t_250 <- melt(results$sim_HMM_theta_cl_obs_5_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_cl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_cl_obs_5_t_500 <- melt(results$sim_HMM_theta_cl_obs_5_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_cl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_cl_obs_5_t_1000 <- melt(results$sim_HMM_theta_cl_obs_5_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_cl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_cl_obs_5_t_2000 <- melt(results$sim_HMM_theta_cl_obs_5_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_cl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_cl_obs_5_t_4000 <- melt(results$sim_HMM_theta_cl_obs_5_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_cl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_cl_obs_5_t_8000 <- melt(results$sim_HMM_theta_cl_obs_5_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_cl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_cl_obs_5_t_250 <- cbind(sd_gamma_cl_obs_5_t_250, Length = "250", Clarity = "Clear")
+sd_gamma_cl_obs_5_t_500 <- cbind(sd_gamma_cl_obs_5_t_500, Length = "500", Clarity = "Clear")
+sd_gamma_cl_obs_5_t_1000 <- cbind(sd_gamma_cl_obs_5_t_1000, Length = "1000", Clarity = "Clear")
+sd_gamma_cl_obs_5_t_2000 <- cbind(sd_gamma_cl_obs_5_t_2000, Length = "2000", Clarity = "Clear")
+sd_gamma_cl_obs_5_t_4000 <- cbind(sd_gamma_cl_obs_5_t_4000, Length = "4000", Clarity = "Clear")
+sd_gamma_cl_obs_5_t_8000 <- cbind(sd_gamma_cl_obs_5_t_8000, Length = "8000", Clarity = "Clear")
+
+sd_cl_obs_5_gamma <- rbind(data.frame(sd_gamma_cl_obs_5_t_250), data.frame(sd_gamma_cl_obs_5_t_500),  
+                           data.frame(sd_gamma_cl_obs_5_t_1000), data.frame(sd_gamma_cl_obs_5_t_2000), 
+                           data.frame(sd_gamma_cl_obs_5_t_4000), data.frame(sd_gamma_cl_obs_5_t_8000))
+sd_cl_obs_5_gamma$Length <- factor(sd_cl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_cl_obs_5_gamma <- aggregate(Sd ~ Length + S_to_s + Clarity, sd_cl_obs_5_gamma, mean)
+
+# Moderately clear. 
+sd_gamma_modcl_obs_5_t_250 <- melt(results$sim_HMM_theta_modcl_obs_5_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_modcl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modcl_obs_5_t_500 <- melt(results$sim_HMM_theta_modcl_obs_5_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_modcl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modcl_obs_5_t_1000 <- melt(results$sim_HMM_theta_modcl_obs_5_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_modcl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modcl_obs_5_t_2000 <- melt(results$sim_HMM_theta_modcl_obs_5_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_modcl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modcl_obs_5_t_4000 <- melt(results$sim_HMM_theta_modcl_obs_5_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_modcl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modcl_obs_5_t_8000 <- melt(results$sim_HMM_theta_modcl_obs_5_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_modcl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_modcl_obs_5_t_250 <- cbind(sd_gamma_modcl_obs_5_t_250, Length = "250", Clarity = "Moderate")
+sd_gamma_modcl_obs_5_t_500 <- cbind(sd_gamma_modcl_obs_5_t_500, Length = "500", Clarity = "Moderate")
+sd_gamma_modcl_obs_5_t_1000 <- cbind(sd_gamma_modcl_obs_5_t_1000, Length = "1000", Clarity = "Moderate")
+sd_gamma_modcl_obs_5_t_2000 <- cbind(sd_gamma_modcl_obs_5_t_2000, Length = "2000", Clarity = "Moderate")
+sd_gamma_modcl_obs_5_t_4000 <- cbind(sd_gamma_modcl_obs_5_t_4000, Length = "4000", Clarity = "Moderate")
+sd_gamma_modcl_obs_5_t_8000 <- cbind(sd_gamma_modcl_obs_5_t_8000, Length = "8000", Clarity = "Moderate")
+
+sd_modcl_obs_5_gamma <- rbind(data.frame(sd_gamma_modcl_obs_5_t_250), data.frame(sd_gamma_modcl_obs_5_t_500),  
+                              data.frame(sd_gamma_modcl_obs_5_t_1000), data.frame(sd_gamma_modcl_obs_5_t_2000), 
+                              data.frame(sd_gamma_modcl_obs_5_t_4000), data.frame(sd_gamma_modcl_obs_5_t_8000))
+sd_modcl_obs_5_gamma$Length <- factor(sd_modcl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_modcl_obs_5_gamma <- aggregate(Sd ~ Length + S_to_s + Clarity, sd_modcl_obs_5_gamma, mean)
+
+# Unclear. 
+sd_gamma_uncl_obs_5_t_250 <- melt(results$sim_HMM_theta_uncl_obs_5_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_500 <- melt(results$sim_HMM_theta_uncl_obs_5_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_1000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_2000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_4000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_8000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_uncl_obs_5_t_250 <- cbind(sd_gamma_uncl_obs_5_t_250, Length = "250", Clarity = "Unclear")
+sd_gamma_uncl_obs_5_t_500 <- cbind(sd_gamma_uncl_obs_5_t_500, Length = "500", Clarity = "Unclear")
+sd_gamma_uncl_obs_5_t_1000 <- cbind(sd_gamma_uncl_obs_5_t_1000, Length = "1000", Clarity = "Unclear")
+sd_gamma_uncl_obs_5_t_2000 <- cbind(sd_gamma_uncl_obs_5_t_2000, Length = "2000", Clarity = "Unclear")
+sd_gamma_uncl_obs_5_t_4000 <- cbind(sd_gamma_uncl_obs_5_t_4000, Length = "4000", Clarity = "Unclear")
+sd_gamma_uncl_obs_5_t_8000 <- cbind(sd_gamma_uncl_obs_5_t_8000, Length = "8000", Clarity = "Unclear")
+
+sd_uncl_obs_5_gamma <- rbind(data.frame(sd_gamma_uncl_obs_5_t_250), data.frame(sd_gamma_uncl_obs_5_t_500),  
+                              data.frame(sd_gamma_uncl_obs_5_t_1000), data.frame(sd_gamma_uncl_obs_5_t_2000), 
+                              data.frame(sd_gamma_uncl_obs_5_t_4000), data.frame(sd_gamma_uncl_obs_5_t_8000))
+sd_uncl_obs_5_gamma$Length <- factor(sd_uncl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_uncl_obs_5_gamma <- aggregate(Sd ~ Length + S_to_s + Clarity, sd_uncl_obs_5_gamma, mean)
+
+# Plot of standard deviation.
+sd_obs_5_gamma <- rbind(data.frame(sd_cl_obs_5_gamma), data.frame(sd_modcl_obs_5_gamma),  
+                        data.frame(sd_uncl_obs_5_gamma))
+sd_obs_5_gamma$Clarity <- factor(sd_obs_5_gamma$Clarity, levels = c("Clear", "Moderate", "Unclear"))
+ggplot(sd_obs_5_gamma, aes(x = Length, y = Sd, color = Clarity, group = Clarity)) +
+  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 3) +
+  geom_point() + geom_line() +  
+  ggtitle("Standard deviation transition probabilities by clarity and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Standard deviation") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+#########################
+### Overlap condition ###
+#########################
+
+### Theta.
+
+## Mean bias.
+
+# No overlap.
+no_overlap_true <- c(0.84, 0.04, 0.04, 0.04, 0.04,
+                     0.04, 0.44, 0.44, 0.04, 0.04,
+                     0.04, 0.04, 0.04, 0.44, 0.44)  
+bias_theta_nooverl_obs_5_t_250 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_250$out_sim$emiss_mean, 2, 
+                                        no_overlap_true)
+bias_theta_nooverl_obs_5_t_500 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_500$out_sim$emiss_mean, 2, 
+                                        no_overlap_true)
+bias_theta_nooverl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_1000$out_sim$emiss_mean, 2,
+                                         no_overlap_true)
+bias_theta_nooverl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_2000$out_sim$emiss_mean, 2, 
+                                         no_overlap_true)
+bias_theta_nooverl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_4000$out_sim$emiss_mean, 2,
+                                         no_overlap_true)
+bias_theta_nooverl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_8000$out_sim$emiss_mean, 2, 
+                                         no_overlap_true)
+
+bias_theta_nooverl_obs_5_t_250 <- melt(bias_theta_nooverl_obs_5_t_250)
+colnames(bias_theta_nooverl_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_nooverl_obs_5_t_500 <- melt(bias_theta_nooverl_obs_5_t_500)
+colnames(bias_theta_nooverl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_nooverl_obs_5_t_1000 <- melt(bias_theta_nooverl_obs_5_t_1000)
+colnames(bias_theta_nooverl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_nooverl_obs_5_t_2000 <- melt(bias_theta_nooverl_obs_5_t_2000)
+colnames(bias_theta_nooverl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_nooverl_obs_5_t_4000 <- melt(bias_theta_nooverl_obs_5_t_4000)
+colnames(bias_theta_nooverl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_nooverl_obs_5_t_8000 <- melt(bias_theta_nooverl_obs_5_t_8000)
+colnames(bias_theta_nooverl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_theta_nooverl_obs_5_t_250 <- cbind(bias_theta_nooverl_obs_5_t_250, Length = "250", Overlap = "None")
+bias_theta_nooverl_obs_5_t_500 <- cbind(bias_theta_nooverl_obs_5_t_500, Length = "500", Overlap = "None")
+bias_theta_nooverl_obs_5_t_1000 <- cbind(bias_theta_nooverl_obs_5_t_1000, Length = "1000", Overlap = "None")
+bias_theta_nooverl_obs_5_t_2000 <- cbind(bias_theta_nooverl_obs_5_t_2000, Length = "2000", Overlap = "None" )
+bias_theta_nooverl_obs_5_t_4000 <- cbind(bias_theta_nooverl_obs_5_t_4000, Length = "4000", Overlap = "None")
+bias_theta_nooverl_obs_5_t_8000 <- cbind(bias_theta_nooverl_obs_5_t_8000, Length = "8000", Overlap = "None")
+
+nooverl_obs_5_theta <- rbind(data.frame(bias_theta_nooverl_obs_5_t_250), data.frame(bias_theta_nooverl_obs_5_t_500),  
+                             data.frame(bias_theta_nooverl_obs_5_t_1000), data.frame(bias_theta_nooverl_obs_5_t_2000), 
+                             data.frame(bias_theta_nooverl_obs_5_t_4000), data.frame(bias_theta_nooverl_obs_5_t_8000))
+nooverl_obs_5_theta$Length <- factor(nooverl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+nooverl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Overlap, nooverl_obs_5_theta, mean)
+
+# Moderate overlap. 
+mod_overlap_true <- c(0.59, 0.29, 0.04, 0.04, 0.04,
+                      0.04, 0.29, 0.59, 0.04, 0.04,
+                      0.04, 0.04, 0.20, 0.36, 0.36)
+bias_theta_modoverl_obs_5_t_250 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_250$out_sim$emiss_mean, 2,
+                                         mod_overlap_true)
+bias_theta_modoverl_obs_5_t_500 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_500$out_sim$emiss_mean, 2,
+                                         mod_overlap_true)
+bias_theta_modoverl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_1000$out_sim$emiss_mean, 2,
+                                          mod_overlap_true)
+bias_theta_modoverl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_2000$out_sim$emiss_mean, 2,
+                                          mod_overlap_true)
+bias_theta_modoverl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_4000$out_sim$emiss_mean, 2,
+                                          mod_overlap_true)
+bias_theta_modoverl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_8000$out_sim$emiss_mean, 2,
+                                          mod_overlap_true)
+
+bias_theta_modoverl_obs_5_t_250 <- melt(bias_theta_modoverl_obs_5_t_250)
+colnames(bias_theta_modoverl_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modoverl_obs_5_t_500 <- melt(bias_theta_modoverl_obs_5_t_500)
+colnames(bias_theta_modoverl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modoverl_obs_5_t_1000 <- melt(bias_theta_modoverl_obs_5_t_1000)
+colnames(bias_theta_modoverl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modoverl_obs_5_t_2000 <- melt(bias_theta_modoverl_obs_5_t_2000)
+colnames(bias_theta_modoverl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modoverl_obs_5_t_4000 <- melt(bias_theta_modoverl_obs_5_t_4000)
+colnames(bias_theta_modoverl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_modoverl_obs_5_t_8000 <- melt(bias_theta_modoverl_obs_5_t_8000)
+colnames(bias_theta_modoverl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_theta_modoverl_obs_5_t_250 <- cbind(bias_theta_modoverl_obs_5_t_250, Length = "250", Overlap = "Moderate")
+bias_theta_modoverl_obs_5_t_500 <- cbind(bias_theta_modoverl_obs_5_t_500, Length = "500", Overlap = "Moderate")
+bias_theta_modoverl_obs_5_t_1000 <- cbind(bias_theta_modoverl_obs_5_t_1000, Length = "1000", Overlap = "Moderate")
+bias_theta_modoverl_obs_5_t_2000 <- cbind(bias_theta_modoverl_obs_5_t_2000, Length = "2000", Overlap = "Moderate")
+bias_theta_modoverl_obs_5_t_4000 <- cbind(bias_theta_modoverl_obs_5_t_4000, Length = "4000", Overlap = "Moderate")
+bias_theta_modoverl_obs_5_t_8000 <- cbind(bias_theta_modoverl_obs_5_t_8000, Length = "8000", Overlap = "Moderate")
+
+modoverl_obs_5_theta <- rbind(data.frame(bias_theta_modoverl_obs_5_t_250), data.frame(bias_theta_modoverl_obs_5_t_500),  
+                              data.frame(bias_theta_modoverl_obs_5_t_1000), data.frame(bias_theta_modoverl_obs_5_t_2000), 
+                              data.frame(bias_theta_modoverl_obs_5_t_4000), data.frame(bias_theta_modoverl_obs_5_t_8000))
+modoverl_obs_5_theta$Length <- factor(modoverl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+modoverl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Overlap, modoverl_obs_5_theta, mean)
+
+# Much overlap. 
+much_overlap_true <- c(0.44, 0.44, 0.04, 0.04, 0.04,
+                       0.04, 0.44, 0.44, 0.04, 0.04,
+                       0.04, 0.04, 0.30, 0.31, 0.31)
+bias_theta_muchoverl_obs_5_t_500 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_500$out_sim$emiss_mean, 2,
+                                          much_overlap_true) 
+bias_theta_muchoverl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_1000$out_sim$emiss_mean, 2,
+                                           much_overlap_true)
+bias_theta_muchoverl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_2000$out_sim$emiss_mean, 2,
+                                           much_overlap_true)
+bias_theta_muchoverl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_4000$out_sim$emiss_mean, 2,
+                                           much_overlap_true)
+bias_theta_muchoverl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_8000$out_sim$emiss_mean, 2,
+                                           much_overlap_true)
+
+bias_theta_muchoverl_obs_5_t_500 <- melt(bias_theta_muchoverl_obs_5_t_500)
+colnames(bias_theta_muchoverl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_muchoverl_obs_5_t_1000 <- melt(bias_theta_muchoverl_obs_5_t_1000)
+colnames(bias_theta_muchoverl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_muchoverl_obs_5_t_2000 <- melt(bias_theta_muchoverl_obs_5_t_2000)
+colnames(bias_theta_muchoverl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_muchoverl_obs_5_t_4000 <- melt(bias_theta_muchoverl_obs_5_t_4000)
+colnames(bias_theta_muchoverl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_muchoverl_obs_5_t_8000 <- melt(bias_theta_muchoverl_obs_5_t_8000)
+colnames(bias_theta_muchoverl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_theta_muchoverl_obs_5_t_500 <- cbind(bias_theta_muchoverl_obs_5_t_500, Length = "500", Overlap = "Much")
+bias_theta_muchoverl_obs_5_t_1000 <- cbind(bias_theta_muchoverl_obs_5_t_1000, Length = "1000", Overlap = "Much")
+bias_theta_muchoverl_obs_5_t_2000 <- cbind(bias_theta_muchoverl_obs_5_t_2000, Length = "2000", Overlap = "Much")
+bias_theta_muchoverl_obs_5_t_4000 <- cbind(bias_theta_muchoverl_obs_5_t_4000, Length = "4000", Overlap = "Much")
+bias_theta_muchoverl_obs_5_t_8000 <- cbind(bias_theta_muchoverl_obs_5_t_8000, Length = "8000", Overlap = "Much")
+
+muchoverl_obs_5_theta <- rbind(data.frame(bias_theta_muchoverl_obs_5_t_500),  
+                               data.frame(bias_theta_muchoverl_obs_5_t_1000), data.frame(bias_theta_muchoverl_obs_5_t_2000), 
+                               data.frame(bias_theta_muchoverl_obs_5_t_4000), data.frame(bias_theta_muchoverl_obs_5_t_8000))
+muchoverl_obs_5_theta$Length <- factor(muchoverl_obs_5_theta$Length, levels = c("500", "1000", "2000", "4000", "8000"))
+muchoverl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Overlap, muchoverl_obs_5_theta, mean)
+
+# Plot of mean bias theta.
+overl_5_theta <- rbind(data.frame(nooverl_obs_5_theta), data.frame(modoverl_obs_5_theta),
+                       data.frame(muchoverl_obs_5_theta))
+overl_5_theta$Overlap <- factor(overl_5_theta$Overlap, levels = c("None", "Moderate", "Much"))
+ggplot(overl_5_theta, aes(x = Length, y = Abs_bias, color = Overlap, group = Overlap)) +
+  facet_wrap(facets = vars(S_to_obs), nrow = 3, ncol = 5) +
+  geom_point() + geom_line() +  
+  ggtitle("Bias emission probabilities by overlap and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Bias") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+## Standard deviation. 
+
+# No overlap.
+sd_theta_nooverl_obs_5_t_250 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_250$out_sim$emiss_sd)
+colnames(sd_theta_nooverl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_theta_nooverl_obs_5_t_500 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_500$out_sim$emiss_sd)
+colnames(sd_theta_nooverl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_theta_nooverl_obs_5_t_1000 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_1000$out_sim$emiss_sd)
+colnames(sd_theta_nooverl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_theta_nooverl_obs_5_t_2000 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_2000$out_sim$emiss_sd)
+colnames(sd_theta_nooverl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_theta_nooverl_obs_5_t_4000 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_4000$out_sim$emiss_sd)
+colnames(sd_theta_nooverl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_theta_nooverl_obs_5_t_8000 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_8000$out_sim$emiss_sd)
+colnames(sd_theta_nooverl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_theta_nooverl_obs_5_t_250 <- cbind(sd_theta_nooverl_obs_5_t_250, Length = "250", Overlap = "None")
+sd_theta_nooverl_obs_5_t_500 <- cbind(sd_theta_nooverl_obs_5_t_500, Length = "500", Overlap = "None")
+sd_theta_nooverl_obs_5_t_1000 <- cbind(sd_theta_nooverl_obs_5_t_1000, Length = "1000", Overlap = "None")
+sd_theta_nooverl_obs_5_t_2000 <- cbind(sd_theta_nooverl_obs_5_t_2000, Length = "2000", Overlap = "None")
+sd_theta_nooverl_obs_5_t_4000 <- cbind(sd_theta_nooverl_obs_5_t_4000, Length = "4000", Overlap = "None")
+sd_theta_nooverl_obs_5_t_8000 <- cbind(sd_theta_nooverl_obs_5_t_8000, Length = "8000", Overlap = "None")
+
+sd_nooverl_obs_5_theta <- rbind(data.frame(sd_theta_nooverl_obs_5_t_250), data.frame(sd_theta_nooverl_obs_5_t_500),  
+                           data.frame(sd_theta_nooverl_obs_5_t_1000), data.frame(sd_theta_nooverl_obs_5_t_2000), 
+                           data.frame(sd_theta_nooverl_obs_5_t_4000), data.frame(sd_theta_nooverl_obs_5_t_8000))
+sd_nooverl_obs_5_theta$Length <- factor(sd_nooverl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_nooverl_obs_5_theta$Overlap <- factor(sd_nooverl_obs_5_theta$Overlap, levels = c("None", "Moderate", "Much"))
+sd_nooverl_obs_5_theta <- aggregate(Sd ~ Length + S_to_s + Overlap, sd_nooverl_obs_5_theta, mean)
+
+# Moderate overlap. 
+sd_theta_modoverl_obs_5_t_250 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_250$out_sim$emiss_sd)
+colnames(sd_theta_modoverl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_theta_modoverl_obs_5_t_500 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_500$out_sim$emiss_sd)
+colnames(sd_theta_modoverl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_theta_modoverl_obs_5_t_1000 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_1000$out_sim$emiss_sd)
+colnames(sd_theta_modoverl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_theta_modoverl_obs_5_t_2000 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_2000$out_sim$emiss_sd)
+colnames(sd_theta_modoverl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_theta_modoverl_obs_5_t_4000 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_4000$out_sim$emiss_sd)
+colnames(sd_theta_modoverl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_theta_modoverl_obs_5_t_8000 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_8000$out_sim$emiss_sd)
+colnames(sd_theta_modoverl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_theta_modoverl_obs_5_t_250 <- cbind(sd_theta_modoverl_obs_5_t_250, Length = "250", Overlap = "Moderate")
+sd_theta_modoverl_obs_5_t_500 <- cbind(sd_theta_modoverl_obs_5_t_500, Length = "500", Overlap = "Moderate")
+sd_theta_modoverl_obs_5_t_1000 <- cbind(sd_theta_modoverl_obs_5_t_1000, Length = "1000", Overlap = "Moderate")
+sd_theta_modoverl_obs_5_t_2000 <- cbind(sd_theta_modoverl_obs_5_t_2000, Length = "2000", Overlap = "Moderate")
+sd_theta_modoverl_obs_5_t_4000 <- cbind(sd_theta_modoverl_obs_5_t_4000, Length = "4000", Overlap = "Moderate")
+sd_theta_modoverl_obs_5_t_8000 <- cbind(sd_theta_modoverl_obs_5_t_8000, Length = "8000", Overlap = "Moderate")
+
+sd_modoverl_obs_5_theta <- rbind(data.frame(sd_theta_modoverl_obs_5_t_250), data.frame(sd_theta_modoverl_obs_5_t_500),  
+                              data.frame(sd_theta_modoverl_obs_5_t_1000), data.frame(sd_theta_modoverl_obs_5_t_2000), 
+                              data.frame(sd_theta_modoverl_obs_5_t_4000), data.frame(sd_theta_modoverl_obs_5_t_8000))
+sd_modoverl_obs_5_theta$Length <- factor(sd_modoverl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_modoverl_obs_5_theta <- aggregate(Sd ~ Length + S_to_s + Overlap, sd_modoverl_obs_5_theta, mean)
+
+# Much overlap. 
+sd_theta_muchoverl_obs_5_t_500 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_500$out_sim$emiss_sd)
+colnames(sd_theta_muchoverl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_theta_muchoverl_obs_5_t_1000 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_1000$out_sim$emiss_sd)
+colnames(sd_theta_muchoverl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_theta_muchoverl_obs_5_t_2000 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_2000$out_sim$emiss_sd)
+colnames(sd_theta_muchoverl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_theta_muchoverl_obs_5_t_4000 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_4000$out_sim$emiss_sd)
+colnames(sd_theta_muchoverl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_theta_muchoverl_obs_5_t_8000 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_8000$out_sim$emiss_sd)
+colnames(sd_theta_muchoverl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_theta_muchoverl_obs_5_t_500 <- cbind(sd_theta_muchoverl_obs_5_t_500, Length = "500", Overlap = "Much")
+sd_theta_muchoverl_obs_5_t_1000 <- cbind(sd_theta_muchoverl_obs_5_t_1000, Length = "1000", Overlap = "Much")
+sd_theta_muchoverl_obs_5_t_2000 <- cbind(sd_theta_muchoverl_obs_5_t_2000, Length = "2000", Overlap = "Much")
+sd_theta_muchoverl_obs_5_t_4000 <- cbind(sd_theta_muchoverl_obs_5_t_4000, Length = "4000", Overlap = "Much")
+sd_theta_muchoverl_obs_5_t_8000 <- cbind(sd_theta_muchoverl_obs_5_t_8000, Length = "8000", Overlap = "Much")
+
+sd_muchoverl_obs_5_theta <- rbind(data.frame(sd_theta_muchoverl_obs_5_t_500),  
+                             data.frame(sd_theta_muchoverl_obs_5_t_1000), data.frame(sd_theta_muchoverl_obs_5_t_2000), 
+                             data.frame(sd_theta_muchoverl_obs_5_t_4000), data.frame(sd_theta_muchoverl_obs_5_t_8000))
+sd_muchoverl_obs_5_theta$Length <- factor(sd_muchoverl_obs_5_theta$Length, levels = c("500", "1000", "2000", "4000", "8000"))
+sd_muchoverl_obs_5_theta <- aggregate(Sd ~ Length + S_to_s + Overlap, sd_muchoverl_obs_5_theta, mean)
+
+# Plot of standard deviation.
+sd_obs_5_theta_overl <- rbind(data.frame(sd_nooverl_obs_5_theta), data.frame(sd_modoverl_obs_5_theta),  
+                              data.frame(sd_muchoverl_obs_5_theta))
+sd_obs_5_theta_overl$Overlap <- factor(sd_obs_5_theta_overl$Overlap, levels = c("None", "Moderate", "Much"))
+ggplot(sd_obs_5_theta_overl, aes(x = Length, y = Sd, color = Overlap, group = Overlap)) +
+  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 5) +
+  geom_point() + geom_line() +  
+  ggtitle("Standard deviation emission probabilities by overlap and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Standard deviation") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+### Gamma.
+
+## Mean bias overlap condition gamma. 
+
+# No overlap.
+gamma_no_overlap_true <- c(0.80, 0.10, 0.10, 
+                           0.10, 0.80, 0.10, 
+                           0.10, 0.10, 0.80) 
+bias_gamma_nooverl_obs_5_t_250 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_250$out_sim$gamma_mean, 2, 
+                                        gamma_no_overlap_true)
+bias_gamma_nooverl_obs_5_t_500 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_500$out_sim$gamma_mean, 2, 
+                                        gamma_no_overlap_true)
+bias_gamma_nooverl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_1000$out_sim$gamma_mean, 2,
+                                         gamma_no_overlap_true)
+bias_gamma_nooverl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_2000$out_sim$gamma_mean, 2, 
+                                         gamma_no_overlap_true)
+bias_gamma_nooverl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_4000$out_sim$gamma_mean, 2,
+                                         gamma_no_overlap_true)
+bias_gamma_nooverl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_nooverl_obs_5_t_8000$out_sim$gamma_mean, 2, 
+                                         gamma_no_overlap_true)
+
+bias_gamma_nooverl_obs_5_t_250 <- melt(bias_gamma_nooverl_obs_5_t_250)
+colnames(bias_gamma_nooverl_obs_5_t_250) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_nooverl_obs_5_t_500 <- melt(bias_gamma_nooverl_obs_5_t_500)
+colnames(bias_gamma_nooverl_obs_5_t_500) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_nooverl_obs_5_t_1000 <- melt(bias_gamma_nooverl_obs_5_t_1000)
+colnames(bias_gamma_nooverl_obs_5_t_1000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_nooverl_obs_5_t_2000 <- melt(bias_gamma_nooverl_obs_5_t_2000)
+colnames(bias_gamma_nooverl_obs_5_t_2000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_nooverl_obs_5_t_4000 <- melt(bias_gamma_nooverl_obs_5_t_4000)
+colnames(bias_gamma_nooverl_obs_5_t_4000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_nooverl_obs_5_t_8000 <- melt(bias_gamma_nooverl_obs_5_t_8000)
+colnames(bias_gamma_nooverl_obs_5_t_8000) <- c("Id", "S_to_s", "Abs_bias")
+
+bias_gamma_nooverl_obs_5_t_250 <- cbind(bias_gamma_nooverl_obs_5_t_250, Length = "250", Overlap = "None")
+bias_gamma_nooverl_obs_5_t_500 <- cbind(bias_gamma_nooverl_obs_5_t_500, Length = "500", Overlap = "None")
+bias_gamma_nooverl_obs_5_t_1000 <- cbind(bias_gamma_nooverl_obs_5_t_1000, Length = "1000", Overlap = "None")
+bias_gamma_nooverl_obs_5_t_2000 <- cbind(bias_gamma_nooverl_obs_5_t_2000, Length = "2000", Overlap = "None" )
+bias_gamma_nooverl_obs_5_t_4000 <- cbind(bias_gamma_nooverl_obs_5_t_4000, Length = "4000", Overlap = "None")
+bias_gamma_nooverl_obs_5_t_8000 <- cbind(bias_gamma_nooverl_obs_5_t_8000, Length = "8000", Overlap = "None")
+
+nooverl_obs_5_gamma <- rbind(data.frame(bias_gamma_nooverl_obs_5_t_250), data.frame(bias_gamma_nooverl_obs_5_t_500),  
+                             data.frame(bias_gamma_nooverl_obs_5_t_1000), data.frame(bias_gamma_nooverl_obs_5_t_2000), 
+                             data.frame(bias_gamma_nooverl_obs_5_t_4000), data.frame(bias_gamma_nooverl_obs_5_t_8000))
+nooverl_obs_5_gamma$Length <- factor(nooverl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+nooverl_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Overlap, nooverl_obs_5_gamma, mean)
+
+# Moderate overlap. 
+gamma_mod_overlap_true <- c(0.80, 0.10, 0.10, 
+                            0.10, 0.80, 0.10, 
+                            0.10, 0.10, 0.80)
+bias_gamma_modoverl_obs_5_t_250 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_250$out_sim$gamma_mean, 2,
+                                         gamma_mod_overlap_true)
+bias_gamma_modoverl_obs_5_t_500 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_500$out_sim$gamma_mean, 2,
+                                         gamma_mod_overlap_true)
+bias_gamma_modoverl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_1000$out_sim$gamma_mean, 2,
+                                          gamma_mod_overlap_true)
+bias_gamma_modoverl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_2000$out_sim$gamma_mean, 2,
+                                          gamma_mod_overlap_true)
+bias_gamma_modoverl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_4000$out_sim$gamma_mean, 2,
+                                          gamma_mod_overlap_true)
+bias_gamma_modoverl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_modoverl_obs_5_t_8000$out_sim$gamma_mean, 2,
+                                          gamma_mod_overlap_true)
+
+bias_gamma_modoverl_obs_5_t_250 <- melt(bias_gamma_modoverl_obs_5_t_250)
+colnames(bias_gamma_modoverl_obs_5_t_250) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_modoverl_obs_5_t_500 <- melt(bias_gamma_modoverl_obs_5_t_500)
+colnames(bias_gamma_modoverl_obs_5_t_500) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_modoverl_obs_5_t_1000 <- melt(bias_gamma_modoverl_obs_5_t_1000)
+colnames(bias_gamma_modoverl_obs_5_t_1000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_modoverl_obs_5_t_2000 <- melt(bias_gamma_modoverl_obs_5_t_2000)
+colnames(bias_gamma_modoverl_obs_5_t_2000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_modoverl_obs_5_t_4000 <- melt(bias_gamma_modoverl_obs_5_t_4000)
+colnames(bias_gamma_modoverl_obs_5_t_4000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_modoverl_obs_5_t_8000 <- melt(bias_gamma_modoverl_obs_5_t_8000)
+colnames(bias_gamma_modoverl_obs_5_t_8000) <- c("Id", "S_to_s", "Abs_bias")
+
+bias_gamma_modoverl_obs_5_t_250 <- cbind(bias_gamma_modoverl_obs_5_t_250, Length = "250", Overlap = "Moderate")
+bias_gamma_modoverl_obs_5_t_500 <- cbind(bias_gamma_modoverl_obs_5_t_500, Length = "500", Overlap = "Moderate")
+bias_gamma_modoverl_obs_5_t_1000 <- cbind(bias_gamma_modoverl_obs_5_t_1000, Length = "1000", Overlap = "Moderate")
+bias_gamma_modoverl_obs_5_t_2000 <- cbind(bias_gamma_modoverl_obs_5_t_2000, Length = "2000", Overlap = "Moderate")
+bias_gamma_modoverl_obs_5_t_4000 <- cbind(bias_gamma_modoverl_obs_5_t_4000, Length = "4000", Overlap = "Moderate")
+bias_gamma_modoverl_obs_5_t_8000 <- cbind(bias_gamma_modoverl_obs_5_t_8000, Length = "8000", Overlap = "Moderate")
+
+modoverl_obs_5_gamma <- rbind(data.frame(bias_gamma_modoverl_obs_5_t_250), data.frame(bias_gamma_modoverl_obs_5_t_500),  
+                              data.frame(bias_gamma_modoverl_obs_5_t_1000), data.frame(bias_gamma_modoverl_obs_5_t_2000), 
+                              data.frame(bias_gamma_modoverl_obs_5_t_4000), data.frame(bias_gamma_modoverl_obs_5_t_8000))
+modoverl_obs_5_gamma$Length <- factor(modoverl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+modoverl_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Overlap, modoverl_obs_5_gamma, mean)
+
+# Much overlap. 
+gamma_much_overlap_true <- c(0.80, 0.10, 0.10, 
+                             0.10, 0.80, 0.10, 
+                             0.10, 0.10, 0.80)
+bias_gamma_muchoverl_obs_5_t_500 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_500$out_sim$gamma_mean, 2,
+                                          gamma_much_overlap_true) 
+bias_gamma_muchoverl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_1000$out_sim$gamma_mean, 2,
+                                           gamma_much_overlap_true)
+bias_gamma_muchoverl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_2000$out_sim$gamma_mean, 2,
+                                           gamma_much_overlap_true)
+bias_gamma_muchoverl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_4000$out_sim$gamma_mean, 2,
+                                           gamma_much_overlap_true)
+bias_gamma_muchoverl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_muchoverl_obs_5_t_8000$out_sim$gamma_mean, 2,
+                                           gamma_much_overlap_true)
+
+bias_gamma_muchoverl_obs_5_t_500 <- melt(bias_gamma_muchoverl_obs_5_t_500)
+colnames(bias_gamma_muchoverl_obs_5_t_500) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_muchoverl_obs_5_t_1000 <- melt(bias_gamma_muchoverl_obs_5_t_1000)
+colnames(bias_gamma_muchoverl_obs_5_t_1000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_muchoverl_obs_5_t_2000 <- melt(bias_gamma_muchoverl_obs_5_t_2000)
+colnames(bias_gamma_muchoverl_obs_5_t_2000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_muchoverl_obs_5_t_4000 <- melt(bias_gamma_muchoverl_obs_5_t_4000)
+colnames(bias_gamma_muchoverl_obs_5_t_4000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_muchoverl_obs_5_t_8000 <- melt(bias_gamma_muchoverl_obs_5_t_8000)
+colnames(bias_gamma_muchoverl_obs_5_t_8000) <- c("Id", "S_to_s", "Abs_bias")
+
+bias_gamma_muchoverl_obs_5_t_500 <- cbind(bias_gamma_muchoverl_obs_5_t_500, Length = "500", Overlap = "Much")
+bias_gamma_muchoverl_obs_5_t_1000 <- cbind(bias_gamma_muchoverl_obs_5_t_1000, Length = "1000", Overlap = "Much")
+bias_gamma_muchoverl_obs_5_t_2000 <- cbind(bias_gamma_muchoverl_obs_5_t_2000, Length = "2000", Overlap = "Much")
+bias_gamma_muchoverl_obs_5_t_4000 <- cbind(bias_gamma_muchoverl_obs_5_t_4000, Length = "4000", Overlap = "Much")
+bias_gamma_muchoverl_obs_5_t_8000 <- cbind(bias_gamma_muchoverl_obs_5_t_8000, Length = "8000", Overlap = "Much")
+
+muchoverl_obs_5_gamma <- rbind(data.frame(bias_gamma_muchoverl_obs_5_t_500),  
+                               data.frame(bias_gamma_muchoverl_obs_5_t_1000), data.frame(bias_gamma_muchoverl_obs_5_t_2000), 
+                               data.frame(bias_gamma_muchoverl_obs_5_t_4000), data.frame(bias_gamma_muchoverl_obs_5_t_8000))
+muchoverl_obs_5_gamma$Length <- factor(muchoverl_obs_5_gamma$Length, levels = c("500", "1000", "2000", "4000", "8000"))
+muchoverl_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Overlap, muchoverl_obs_5_gamma, mean)
+
+# Plot of mean bias gamma.
+overl_5_gamma <- rbind(data.frame(nooverl_obs_5_gamma), data.frame(modoverl_obs_5_gamma),
+                       data.frame(muchoverl_obs_5_gamma))
+overl_5_gamma$Overlap <- factor(overl_5_gamma$Overlap, levels = c("None", "Moderate", "Much"))
+ggplot(overl_5_gamma, aes(x = Length, y = Abs_bias, color = Overlap, group = Overlap)) +
+  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 3) +
+  geom_point() + geom_line() +  
+  ggtitle("Bias transition probabilities by overlap and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Bias") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+## Standard deviation overlap condition gamma.
+
+# No overlap.
+sd_gamma_nooverl_obs_5_t_250 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_nooverl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_nooverl_obs_5_t_500 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_nooverl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_nooverl_obs_5_t_1000 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_nooverl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_nooverl_obs_5_t_2000 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_nooverl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_nooverl_obs_5_t_4000 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_nooverl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_nooverl_obs_5_t_8000 <- melt(results$sim_HMM_theta_nooverl_obs_5_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_nooverl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_nooverl_obs_5_t_250 <- cbind(sd_gamma_nooverl_obs_5_t_250, Length = "250", Overlap = "None")
+sd_gamma_nooverl_obs_5_t_500 <- cbind(sd_gamma_nooverl_obs_5_t_500, Length = "500", Overlap = "None")
+sd_gamma_nooverl_obs_5_t_1000 <- cbind(sd_gamma_nooverl_obs_5_t_1000, Length = "1000", Overlap = "None")
+sd_gamma_nooverl_obs_5_t_2000 <- cbind(sd_gamma_nooverl_obs_5_t_2000, Length = "2000", Overlap = "None")
+sd_gamma_nooverl_obs_5_t_4000 <- cbind(sd_gamma_nooverl_obs_5_t_4000, Length = "4000", Overlap = "None")
+sd_gamma_nooverl_obs_5_t_8000 <- cbind(sd_gamma_nooverl_obs_5_t_8000, Length = "8000", Overlap = "None")
+
+sd_nooverl_obs_5_gamma <- rbind(data.frame(sd_gamma_nooverl_obs_5_t_250), data.frame(sd_gamma_nooverl_obs_5_t_500),  
+                                data.frame(sd_gamma_nooverl_obs_5_t_1000), data.frame(sd_gamma_nooverl_obs_5_t_2000), 
+                                data.frame(sd_gamma_nooverl_obs_5_t_4000), data.frame(sd_gamma_nooverl_obs_5_t_8000))
+sd_nooverl_obs_5_gamma$Length <- factor(sd_nooverl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_nooverl_obs_5_gamma <- aggregate(Sd ~ Length + S_to_s + Overlap, sd_nooverl_obs_5_gamma, mean)
+
+# Moderate overlap. 
+sd_gamma_modoverl_obs_5_t_250 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_modoverl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modoverl_obs_5_t_500 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_modoverl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modoverl_obs_5_t_1000 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_modoverl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modoverl_obs_5_t_2000 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_modoverl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modoverl_obs_5_t_4000 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_modoverl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_modoverl_obs_5_t_8000 <- melt(results$sim_HMM_theta_modoverl_obs_5_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_modoverl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_modoverl_obs_5_t_250 <- cbind(sd_gamma_modoverl_obs_5_t_250, Length = "250", Overlap = "Moderate")
+sd_gamma_modoverl_obs_5_t_500 <- cbind(sd_gamma_modoverl_obs_5_t_500, Length = "500", Overlap = "Moderate")
+sd_gamma_modoverl_obs_5_t_1000 <- cbind(sd_gamma_modoverl_obs_5_t_1000, Length = "1000", Overlap = "Moderate")
+sd_gamma_modoverl_obs_5_t_2000 <- cbind(sd_gamma_modoverl_obs_5_t_2000, Length = "2000", Overlap = "Moderate")
+sd_gamma_modoverl_obs_5_t_4000 <- cbind(sd_gamma_modoverl_obs_5_t_4000, Length = "4000", Overlap = "Moderate")
+sd_gamma_modoverl_obs_5_t_8000 <- cbind(sd_gamma_modoverl_obs_5_t_8000, Length = "8000", Overlap = "Moderate")
+
+sd_modoverl_obs_5_gamma <- rbind(data.frame(sd_gamma_modoverl_obs_5_t_250), data.frame(sd_gamma_modoverl_obs_5_t_500),  
+                                 data.frame(sd_gamma_modoverl_obs_5_t_1000), data.frame(sd_gamma_modoverl_obs_5_t_2000), 
+                                 data.frame(sd_gamma_modoverl_obs_5_t_4000), data.frame(sd_gamma_modoverl_obs_5_t_8000))
+sd_modoverl_obs_5_gamma$Length <- factor(sd_modoverl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_modoverl_obs_5_gamma <- aggregate(Sd ~ Length + S_to_s + Overlap, sd_modoverl_obs_5_gamma, mean)
+
+# Much overlap. 
+sd_gamma_muchoverl_obs_5_t_500 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_muchoverl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_muchoverl_obs_5_t_1000 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_muchoverl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_muchoverl_obs_5_t_2000 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_muchoverl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_muchoverl_obs_5_t_4000 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_muchoverl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_muchoverl_obs_5_t_8000 <- melt(results$sim_HMM_theta_muchoverl_obs_5_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_muchoverl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_muchoverl_obs_5_t_500 <- cbind(sd_gamma_muchoverl_obs_5_t_500, Length = "500", Overlap = "Much")
+sd_gamma_muchoverl_obs_5_t_1000 <- cbind(sd_gamma_muchoverl_obs_5_t_1000, Length = "1000", Overlap = "Much")
+sd_gamma_muchoverl_obs_5_t_2000 <- cbind(sd_gamma_muchoverl_obs_5_t_2000, Length = "2000", Overlap = "Much")
+sd_gamma_muchoverl_obs_5_t_4000 <- cbind(sd_gamma_muchoverl_obs_5_t_4000, Length = "4000", Overlap = "Much")
+sd_gamma_muchoverl_obs_5_t_8000 <- cbind(sd_gamma_muchoverl_obs_5_t_8000, Length = "8000", Overlap = "Much")
+
+sd_muchoverl_obs_5_gamma <- rbind(data.frame(sd_gamma_muchoverl_obs_5_t_500),  
+                                  data.frame(sd_gamma_muchoverl_obs_5_t_1000), data.frame(sd_gamma_muchoverl_obs_5_t_2000), 
+                                  data.frame(sd_gamma_muchoverl_obs_5_t_4000), data.frame(sd_gamma_muchoverl_obs_5_t_8000))
+sd_muchoverl_obs_5_gamma$Length <- factor(sd_muchoverl_obs_5_gamma$Length, levels = c("500", "1000", "2000", "4000", "8000"))
+sd_muchoverl_obs_5_gamma <- aggregate(Sd ~ Length + S_to_s + Overlap, sd_muchoverl_obs_5_gamma, mean)
+
+# Plot of standard deviation.
+sd_obs_5_gamma_overl <- rbind(data.frame(sd_nooverl_obs_5_gamma), data.frame(sd_modoverl_obs_5_gamma),  
+                              data.frame(sd_muchoverl_obs_5_gamma))
+sd_obs_5_gamma_overl$Overlap <- factor(sd_obs_5_gamma_overl$Overlap, levels = c("None", "Moderate", "Much"))
+ggplot(sd_obs_5_gamma_overl, aes(x = Length, y = Sd, color = Overlap, group = Overlap)) +
+  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 3) +
+  geom_point() + geom_line() +  
+  ggtitle("Standard deviation transition probabilities by overlap and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Standard deviation") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+##############################
+### Number of observations ###
+##############################
+
+### Theta.
+
+## Mean bias theta. 
+
+# Three observations.
+true_theta_three_obs <- c(0.52, 0.24, 0.24,
+                          0.24, 0.52, 0.24,
+                          0.24, 0.24, 0.52)
+bias_theta_uncl_obs_3_t_250 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_250$out_sim$emiss_mean, 2,
+                                     true_theta_three_obs)
+bias_theta_uncl_obs_3_t_500 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_500$out_sim$emiss_mean, 2,
+                                     true_theta_three_obs)
+bias_theta_uncl_obs_3_t_1000 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_1000$out_sim$emiss_mean, 2,
+                                      true_theta_three_obs)
+bias_theta_uncl_obs_3_t_2000 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_2000$out_sim$emiss_mean, 2,
+                                      true_theta_three_obs)
+bias_theta_uncl_obs_3_t_4000 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_4000$out_sim$emiss_mean, 2,
+                                      true_theta_three_obs)
+bias_theta_uncl_obs_3_t_8000 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_8000$out_sim$emiss_mean, 2,
+                                      true_theta_three_obs)
+
+bias_theta_uncl_obs_3_t_250 <- melt(bias_theta_uncl_obs_3_t_250)
+colnames(bias_theta_uncl_obs_3_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_3_t_500 <- melt(bias_theta_uncl_obs_3_t_500)
+colnames(bias_theta_uncl_obs_3_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_3_t_1000 <- melt(bias_theta_uncl_obs_3_t_1000)
+colnames(bias_theta_uncl_obs_3_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_3_t_2000 <- melt(bias_theta_uncl_obs_3_t_2000)
+colnames(bias_theta_uncl_obs_3_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_3_t_4000 <- melt(bias_theta_uncl_obs_3_t_4000)
+colnames(bias_theta_uncl_obs_3_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_3_t_8000 <- melt(bias_theta_uncl_obs_3_t_8000)
+colnames(bias_theta_uncl_obs_3_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_theta_uncl_obs_3_t_250 <- cbind(bias_theta_uncl_obs_3_t_250, Length = "250", Nobs = "3")
+bias_theta_uncl_obs_3_t_500 <- cbind(bias_theta_uncl_obs_3_t_500, Length = "500", Nobs = "3")
+bias_theta_uncl_obs_3_t_1000 <- cbind(bias_theta_uncl_obs_3_t_1000, Length = "1000", Nobs = "3")
+bias_theta_uncl_obs_3_t_2000 <- cbind(bias_theta_uncl_obs_3_t_2000, Length = "2000", Nobs = "3")
+bias_theta_uncl_obs_3_t_4000 <- cbind(bias_theta_uncl_obs_3_t_4000, Length = "4000", Nobs = "3")
+bias_theta_uncl_obs_3_t_8000 <- cbind(bias_theta_uncl_obs_3_t_8000, Length = "8000", Nobs = "3")
+
+uncl_obs_3_theta <- rbind(data.frame(bias_theta_uncl_obs_3_t_250), data.frame(bias_theta_uncl_obs_3_t_500),  
+                          data.frame(bias_theta_uncl_obs_3_t_1000), data.frame(bias_theta_uncl_obs_3_t_2000), 
+                          data.frame(bias_theta_uncl_obs_3_t_4000), data.frame(bias_theta_uncl_obs_3_t_8000))
+uncl_obs_3_theta$Length <- factor(uncl_obs_3_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+uncl_obs_3_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Nobs, uncl_obs_3_theta, mean)
+
+### Five observations.
+true_theta_five_obs <- c(0.44, 0.14, 0.14, 0.14, 0.14,
+                         0.14, 0.29, 0.29, 0.14, 0.14,
+                         0.14, 0.14, 0.14, 0.29, 0.29)
+bias_theta_uncl_obs_5_t_250 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_250$out_sim$emiss_mean, 2,
+                                     true_theta_five_obs)
+bias_theta_uncl_obs_5_t_500 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_500$out_sim$emiss_mean, 2,
+                                     true_theta_five_obs)
+bias_theta_uncl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_1000$out_sim$emiss_mean, 2,
+                                      true_theta_five_obs)
+bias_theta_uncl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_2000$out_sim$emiss_mean, 2,
+                                      true_theta_five_obs)
+bias_theta_uncl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_4000$out_sim$emiss_mean, 2,
+                                      true_theta_five_obs)
+bias_theta_uncl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_8000$out_sim$emiss_mean, 2,
+                                      true_theta_five_obs)
+
+bias_theta_uncl_obs_5_t_250 <- melt(bias_theta_uncl_obs_5_t_250)
+colnames(bias_theta_uncl_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_500 <- melt(bias_theta_uncl_obs_5_t_500)
+colnames(bias_theta_uncl_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_1000 <- melt(bias_theta_uncl_obs_5_t_1000)
+colnames(bias_theta_uncl_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_2000 <- melt(bias_theta_uncl_obs_5_t_2000)
+colnames(bias_theta_uncl_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_4000 <- melt(bias_theta_uncl_obs_5_t_4000)
+colnames(bias_theta_uncl_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_5_t_8000 <- melt(bias_theta_uncl_obs_5_t_8000)
+colnames(bias_theta_uncl_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_theta_uncl_obs_5_t_250 <- cbind(bias_theta_uncl_obs_5_t_250, Length = "250", Nobs = "5")
+bias_theta_uncl_obs_5_t_500 <- cbind(bias_theta_uncl_obs_5_t_500, Length = "500", Nobs = "5")
+bias_theta_uncl_obs_5_t_1000 <- cbind(bias_theta_uncl_obs_5_t_1000, Length = "1000", Nobs = "5")
+bias_theta_uncl_obs_5_t_2000 <- cbind(bias_theta_uncl_obs_5_t_2000, Length = "2000", Nobs = "5")
+bias_theta_uncl_obs_5_t_4000 <- cbind(bias_theta_uncl_obs_5_t_4000, Length = "4000", Nobs = "5")
+bias_theta_uncl_obs_5_t_8000 <- cbind(bias_theta_uncl_obs_5_t_8000, Length = "8000", Nobs = "5")
+
+uncl_obs_5_theta <- rbind(data.frame(bias_theta_uncl_obs_5_t_250), data.frame(bias_theta_uncl_obs_5_t_500),  
+                          data.frame(bias_theta_uncl_obs_5_t_1000), data.frame(bias_theta_uncl_obs_5_t_2000), 
+                          data.frame(bias_theta_uncl_obs_5_t_4000), data.frame(bias_theta_uncl_obs_5_t_8000))
+uncl_obs_5_theta$Length <- factor(uncl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+uncl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Nobs, uncl_obs_5_theta, mean)
+
+### Seven observations.
+true_theta_seven_obs <- c(0.22, 0.22, 0.22, 0.08, 0.08, 0.09, 0.09,
+                          0.10, 0.10, 0.10, 0.25, 0.25, 0.10, 0.10,
+                          0.12, 0.12, 0.12, 0.12, 0.12, 0.28, 0.12)
+bias_theta_uncl_obs_7_t_250 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_250$out_sim$emiss_mean, 2,
+                                     true_theta_seven_obs)
+bias_theta_uncl_obs_7_t_500 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_500$out_sim$emiss_mean, 2,
+                                     true_theta_seven_obs)
+bias_theta_uncl_obs_7_t_1000 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_1000$out_sim$emiss_mean, 2,
+                                      true_theta_seven_obs)
+bias_theta_uncl_obs_7_t_2000 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_2000$out_sim$emiss_mean, 2,
+                                      true_theta_seven_obs)
+bias_theta_uncl_obs_7_t_4000 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_4000$out_sim$emiss_mean, 2,
+                                      true_theta_seven_obs)
+bias_theta_uncl_obs_7_t_8000 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_8000$out_sim$emiss_mean, 2,
+                                      true_theta_seven_obs)
+
+bias_theta_uncl_obs_7_t_250 <- melt(bias_theta_uncl_obs_7_t_250)
+colnames(bias_theta_uncl_obs_7_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_7_t_500 <- melt(bias_theta_uncl_obs_7_t_500)
+colnames(bias_theta_uncl_obs_7_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_7_t_1000 <- melt(bias_theta_uncl_obs_7_t_1000)
+colnames(bias_theta_uncl_obs_7_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_7_t_2000 <- melt(bias_theta_uncl_obs_7_t_2000)
+colnames(bias_theta_uncl_obs_7_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_7_t_4000 <- melt(bias_theta_uncl_obs_7_t_4000)
+colnames(bias_theta_uncl_obs_7_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_theta_uncl_obs_7_t_8000 <- melt(bias_theta_uncl_obs_7_t_8000)
+colnames(bias_theta_uncl_obs_7_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_theta_uncl_obs_7_t_250 <- cbind(bias_theta_uncl_obs_7_t_250, Length = "250", Nobs = "7")
+bias_theta_uncl_obs_7_t_500 <- cbind(bias_theta_uncl_obs_7_t_500, Length = "500", Nobs = "7")
+bias_theta_uncl_obs_7_t_1000 <- cbind(bias_theta_uncl_obs_7_t_1000, Length = "1000", Nobs = "7")
+bias_theta_uncl_obs_7_t_2000 <- cbind(bias_theta_uncl_obs_7_t_2000, Length = "2000", Nobs = "7")
+bias_theta_uncl_obs_7_t_4000 <- cbind(bias_theta_uncl_obs_7_t_4000, Length = "4000", Nobs = "7")
+bias_theta_uncl_obs_7_t_8000 <- cbind(bias_theta_uncl_obs_7_t_8000, Length = "8000", Nobs = "7")
+
+uncl_obs_7_theta <- rbind(data.frame(bias_theta_uncl_obs_7_t_250), data.frame(bias_theta_uncl_obs_7_t_500),  
+                          data.frame(bias_theta_uncl_obs_7_t_1000), data.frame(bias_theta_uncl_obs_7_t_2000), 
+                          data.frame(bias_theta_uncl_obs_7_t_4000), data.frame(bias_theta_uncl_obs_7_t_8000))
+uncl_obs_7_theta$Length <- factor(uncl_obs_7_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+uncl_obs_7_theta$Nobs <- factor(uncl_obs_7_theta$Nobs, levels = c("3", "5", "7"))
+uncl_obs_7_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Nobs, uncl_obs_7_theta, mean)
+
+# Plot of mean bias theta.
+uncl_obs_theta <- rbind(data.frame(uncl_obs_3_theta), data.frame(uncl_obs_5_theta),
+                        data.frame(uncl_obs_7_theta))
+ggplot(uncl_obs_theta, aes(x = Length, y = Abs_bias, color = Nobs, group = Nobs)) +
+  facet_wrap(facets = vars(S_to_obs), nrow = 3, ncol = 7) +
+  geom_point() + geom_line() +  
+  ggtitle("Bias emission probabilities by number of observations and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Bias") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+## Standard deviation.
+
+# 3 observations.
+sd_theta_uncl_obs_3_t_250 <- melt(results$sim_HMM_theta_uncl_obs_3_t_250$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_3_t_250) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_3_t_500 <- melt(results$sim_HMM_theta_uncl_obs_3_t_500$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_3_t_500) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_3_t_1000 <- melt(results$sim_HMM_theta_uncl_obs_3_t_1000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_3_t_1000) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_3_t_2000 <- melt(results$sim_HMM_theta_uncl_obs_3_t_2000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_3_t_2000) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_3_t_4000 <- melt(results$sim_HMM_theta_uncl_obs_3_t_4000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_3_t_4000) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_3_t_8000 <- melt(results$sim_HMM_theta_uncl_obs_3_t_8000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_3_t_8000) <- c("Id", "S_to_obs", "Sd")
+
+sd_theta_uncl_obs_3_t_250 <- cbind(sd_theta_uncl_obs_3_t_250, Length = "250", Nobs = "3")
+sd_theta_uncl_obs_3_t_500 <- cbind(sd_theta_uncl_obs_3_t_500, Length = "500", Nobs = "3")
+sd_theta_uncl_obs_3_t_1000 <- cbind(sd_theta_uncl_obs_3_t_1000, Length = "1000", Nobs = "3")
+sd_theta_uncl_obs_3_t_2000 <- cbind(sd_theta_uncl_obs_3_t_2000, Length = "2000", Nobs = "3")
+sd_theta_uncl_obs_3_t_4000 <- cbind(sd_theta_uncl_obs_3_t_4000, Length = "4000", Nobs = "3")
+sd_theta_uncl_obs_3_t_8000 <- cbind(sd_theta_uncl_obs_3_t_8000, Length = "8000", Nobs = "3")
+
+sd_uncl_obs_3_theta <- rbind(data.frame(sd_theta_uncl_obs_3_t_250), data.frame(sd_theta_uncl_obs_3_t_500),  
+                                data.frame(sd_theta_uncl_obs_3_t_1000), data.frame(sd_theta_uncl_obs_3_t_2000), 
+                                data.frame(sd_theta_uncl_obs_3_t_4000), data.frame(sd_theta_uncl_obs_3_t_8000))
+sd_uncl_obs_3_theta$Length <- factor(sd_uncl_obs_3_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_uncl_obs_3_theta <- aggregate(Sd ~ Length + S_to_obs + Nobs, sd_uncl_obs_3_theta, mean)
+
+# 5 observations. 
+sd_theta_uncl_obs_5_t_250 <- melt(results$sim_HMM_theta_uncl_obs_5_t_250$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_250) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_5_t_500 <- melt(results$sim_HMM_theta_uncl_obs_5_t_500$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_500) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_5_t_1000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_1000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_1000) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_5_t_2000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_2000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_2000) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_5_t_4000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_4000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_4000) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_5_t_8000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_8000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_5_t_8000) <- c("Id", "S_to_obs", "Sd")
+
+sd_theta_uncl_obs_5_t_250 <- cbind(sd_theta_uncl_obs_5_t_250, Length = "250", Nobs = "5")
+sd_theta_uncl_obs_5_t_500 <- cbind(sd_theta_uncl_obs_5_t_500, Length = "500", Nobs = "5")
+sd_theta_uncl_obs_5_t_1000 <- cbind(sd_theta_uncl_obs_5_t_1000, Length = "1000", Nobs = "5")
+sd_theta_uncl_obs_5_t_2000 <- cbind(sd_theta_uncl_obs_5_t_2000, Length = "2000", Nobs = "5")
+sd_theta_uncl_obs_5_t_4000 <- cbind(sd_theta_uncl_obs_5_t_4000, Length = "4000", Nobs = "5")
+sd_theta_uncl_obs_5_t_8000 <- cbind(sd_theta_uncl_obs_5_t_8000, Length = "8000", Nobs = "5")
+
+sd_uncl_obs_5_theta <- rbind(data.frame(sd_theta_uncl_obs_5_t_250), data.frame(sd_theta_uncl_obs_5_t_500),  
+                             data.frame(sd_theta_uncl_obs_5_t_1000), data.frame(sd_theta_uncl_obs_5_t_2000), 
+                             data.frame(sd_theta_uncl_obs_5_t_4000), data.frame(sd_theta_uncl_obs_5_t_8000))
+sd_uncl_obs_5_theta$Length <- factor(sd_uncl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_uncl_obs_5_theta <- aggregate(Sd ~ Length + S_to_obs + Nobs, sd_uncl_obs_5_theta, mean)
+
+# 7 observations.  
+sd_theta_uncl_obs_7_t_250 <- melt(results$sim_HMM_theta_uncl_obs_7_t_250$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_7_t_250) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_7_t_500 <- melt(results$sim_HMM_theta_uncl_obs_7_t_500$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_7_t_500) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_7_t_1000 <- melt(results$sim_HMM_theta_uncl_obs_7_t_1000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_7_t_1000) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_7_t_2000 <- melt(results$sim_HMM_theta_uncl_obs_7_t_2000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_7_t_2000) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_7_t_4000 <- melt(results$sim_HMM_theta_uncl_obs_7_t_4000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_7_t_4000) <- c("Id", "S_to_obs", "Sd")
+sd_theta_uncl_obs_7_t_8000 <- melt(results$sim_HMM_theta_uncl_obs_7_t_8000$out_sim$emiss_sd)
+colnames(sd_theta_uncl_obs_7_t_8000) <- c("Id", "S_to_obs", "Sd")
+
+sd_theta_uncl_obs_7_t_250 <- cbind(sd_theta_uncl_obs_7_t_250, Length = "250", Nobs = "7")
+sd_theta_uncl_obs_7_t_500 <- cbind(sd_theta_uncl_obs_7_t_500, Length = "500", Nobs = "7")
+sd_theta_uncl_obs_7_t_1000 <- cbind(sd_theta_uncl_obs_7_t_1000, Length = "1000", Nobs = "7")
+sd_theta_uncl_obs_7_t_2000 <- cbind(sd_theta_uncl_obs_7_t_2000, Length = "2000", Nobs = "7")
+sd_theta_uncl_obs_7_t_4000 <- cbind(sd_theta_uncl_obs_7_t_4000, Length = "4000", Nobs = "7")
+sd_theta_uncl_obs_7_t_8000 <- cbind(sd_theta_uncl_obs_7_t_8000, Length = "8000", Nobs = "7")
+
+sd_uncl_obs_7_theta <- rbind(data.frame(sd_theta_uncl_obs_7_t_250), data.frame(sd_theta_uncl_obs_7_t_500),  
+                                  data.frame(sd_theta_uncl_obs_7_t_1000), data.frame(sd_theta_uncl_obs_7_t_2000), 
+                                  data.frame(sd_theta_uncl_obs_7_t_4000), data.frame(sd_theta_uncl_obs_7_t_8000))
+sd_uncl_obs_7_theta$Length <- factor(sd_uncl_obs_7_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_uncl_obs_7_theta <- aggregate(Sd ~ Length + S_to_obs + Nobs, sd_uncl_obs_7_theta, mean)
+
+# Plot of standard deviation.
+sd_obs_theta <- rbind(data.frame(sd_uncl_obs_3_theta), data.frame(sd_uncl_obs_5_theta),  
+                      data.frame(sd_uncl_obs_7_theta))
+sd_obs_theta$Nobs <- factor(sd_obs_theta$Nobs, levels = c("3", "5", "7"))
+ggplot(sd_obs_theta, aes(x = Length, y = Sd, color = Nobs, group = Nobs)) +
+  facet_wrap(facets = vars(S_to_obs), nrow = 5, ncol = 5) +
+  geom_point() + geom_line() +  
+  ggtitle("Standard deviation emission probabilities by number of observations and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Standard deviation") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+### Gamma. 
+
+## Mean. 
+
+# 3 observations.
+gamma_3obs_true <- c(0.80, 0.10, 0.10, 
+                     0.10, 0.80, 0.10, 
+                     0.10, 0.10, 0.80) 
+bias_gamma_uncl_obs_3_t_250 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_250$out_sim$gamma_mean, 2, 
+                                     gamma_3obs_true)
+bias_gamma_uncl_obs_3_t_500 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_500$out_sim$gamma_mean, 2, 
+                                     gamma_3obs_true)
+bias_gamma_uncl_obs_3_t_1000 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_1000$out_sim$gamma_mean, 2,
+                                      gamma_3obs_true)
+bias_gamma_uncl_obs_3_t_2000 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_2000$out_sim$gamma_mean, 2, 
+                                      gamma_3obs_true)
+bias_gamma_uncl_obs_3_t_4000 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_4000$out_sim$gamma_mean, 2,
+                                      gamma_3obs_true)
+bias_gamma_uncl_obs_3_t_8000 <- sweep(results$sim_HMM_theta_uncl_obs_3_t_8000$out_sim$gamma_mean, 2, 
+                                      gamma_3obs_true)
+
+bias_gamma_uncl_obs_3_t_250 <- melt(bias_gamma_uncl_obs_3_t_250)
+colnames(bias_gamma_uncl_obs_3_t_250) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_3_t_500 <- melt(bias_gamma_uncl_obs_3_t_500)
+colnames(bias_gamma_uncl_obs_3_t_500) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_3_t_1000 <- melt(bias_gamma_uncl_obs_3_t_1000)
+colnames(bias_gamma_uncl_obs_3_t_1000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_3_t_2000 <- melt(bias_gamma_uncl_obs_3_t_2000)
+colnames(bias_gamma_uncl_obs_3_t_2000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_3_t_4000 <- melt(bias_gamma_uncl_obs_3_t_4000)
+colnames(bias_gamma_uncl_obs_3_t_4000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_3_t_8000 <- melt(bias_gamma_uncl_obs_3_t_8000)
+colnames(bias_gamma_uncl_obs_3_t_8000) <- c("Id", "S_to_s", "Abs_bias")
+
+bias_gamma_uncl_obs_3_t_250 <- cbind(bias_gamma_uncl_obs_3_t_250, Length = "250", Nobs = "3")
+bias_gamma_uncl_obs_3_t_500 <- cbind(bias_gamma_uncl_obs_3_t_500, Length = "500", Nobs = "3")
+bias_gamma_uncl_obs_3_t_1000 <- cbind(bias_gamma_uncl_obs_3_t_1000, Length = "1000", Nobs = "3")
+bias_gamma_uncl_obs_3_t_2000 <- cbind(bias_gamma_uncl_obs_3_t_2000, Length = "2000", Nobs = "3")
+bias_gamma_uncl_obs_3_t_4000 <- cbind(bias_gamma_uncl_obs_3_t_4000, Length = "4000", Nobs = "3")
+bias_gamma_uncl_obs_3_t_8000 <- cbind(bias_gamma_uncl_obs_3_t_8000, Length = "8000", Nobs = "3")
+
+uncl_obs_3_gamma <- rbind(data.frame(bias_gamma_uncl_obs_3_t_250), data.frame(bias_gamma_uncl_obs_3_t_500),  
+                          data.frame(bias_gamma_uncl_obs_3_t_1000), data.frame(bias_gamma_uncl_obs_3_t_2000), 
+                          data.frame(bias_gamma_uncl_obs_3_t_4000), data.frame(bias_gamma_uncl_obs_3_t_8000))
+uncl_obs_3_gamma$Length <- factor(uncl_obs_3_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+uncl_obs_3_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, uncl_obs_3_gamma, mean)
+
+# 5 observations. 
+gamma_5obs_true <- c(0.80, 0.10, 0.10, 
+                     0.10, 0.80, 0.10, 
+                     0.10, 0.10, 0.80)
+bias_gamma_uncl_obs_5_t_250 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_250$out_sim$gamma_mean, 2,
+                                         gamma_5obs_true)
+bias_gamma_uncl_obs_5_t_500 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_500$out_sim$gamma_mean, 2,
+                                         gamma_5obs_true)
+bias_gamma_uncl_obs_5_t_1000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_1000$out_sim$gamma_mean, 2,
+                                          gamma_5obs_true)
+bias_gamma_uncl_obs_5_t_2000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_2000$out_sim$gamma_mean, 2,
+                                          gamma_5obs_true)
+bias_gamma_uncl_obs_5_t_4000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_4000$out_sim$gamma_mean, 2,
+                                          gamma_5obs_true)
+bias_gamma_uncl_obs_5_t_8000 <- sweep(results$sim_HMM_theta_uncl_obs_5_t_8000$out_sim$gamma_mean, 2,
+                                          gamma_5obs_true)
+
+bias_gamma_uncl_obs_5_t_250 <- melt(bias_gamma_uncl_obs_5_t_250)
+colnames(bias_gamma_uncl_obs_5_t_250) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_5_t_500 <- melt(bias_gamma_uncl_obs_5_t_500)
+colnames(bias_gamma_uncl_obs_5_t_500) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_5_t_1000 <- melt(bias_gamma_uncl_obs_5_t_1000)
+colnames(bias_gamma_uncl_obs_5_t_1000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_5_t_2000 <- melt(bias_gamma_uncl_obs_5_t_2000)
+colnames(bias_gamma_uncl_obs_5_t_2000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_5_t_4000 <- melt(bias_gamma_uncl_obs_5_t_4000)
+colnames(bias_gamma_uncl_obs_5_t_4000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_5_t_8000 <- melt(bias_gamma_uncl_obs_5_t_8000)
+colnames(bias_gamma_uncl_obs_5_t_8000) <- c("Id", "S_to_s", "Abs_bias")
+
+bias_gamma_uncl_obs_5_t_250 <- cbind(bias_gamma_uncl_obs_5_t_250, Length = "250", Nobs = "5")
+bias_gamma_uncl_obs_5_t_500 <- cbind(bias_gamma_uncl_obs_5_t_500, Length = "500", Nobs = "5")
+bias_gamma_uncl_obs_5_t_1000 <- cbind(bias_gamma_uncl_obs_5_t_1000, Length = "1000", Nobs = "5")
+bias_gamma_uncl_obs_5_t_2000 <- cbind(bias_gamma_uncl_obs_5_t_2000, Length = "2000", Nobs = "5")
+bias_gamma_uncl_obs_5_t_4000 <- cbind(bias_gamma_uncl_obs_5_t_4000, Length = "4000", Nobs = "5")
+bias_gamma_uncl_obs_5_t_8000 <- cbind(bias_gamma_uncl_obs_5_t_8000, Length = "8000", Nobs = "5")
+
+uncl_obs_5_gamma <- rbind(data.frame(bias_gamma_uncl_obs_5_t_250), data.frame(bias_gamma_uncl_obs_5_t_500),  
+                          data.frame(bias_gamma_uncl_obs_5_t_1000), data.frame(bias_gamma_uncl_obs_5_t_2000), 
+                          data.frame(bias_gamma_uncl_obs_5_t_4000), data.frame(bias_gamma_uncl_obs_5_t_8000))
+uncl_obs_5_gamma$Length <- factor(uncl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+uncl_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, uncl_obs_5_gamma, mean)
+
+# 7 observations. 
+gamma_7obs_true <- c(0.80, 0.10, 0.10, 
+                     0.10, 0.80, 0.10, 
+                     0.10, 0.10, 0.80)
+bias_gamma_uncl_obs_7_t_250 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_250$out_sim$gamma_mean, 2,
+                                     gamma_7obs_true) 
+bias_gamma_uncl_obs_7_t_500 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_500$out_sim$gamma_mean, 2,
+                                          gamma_7obs_true) 
+bias_gamma_uncl_obs_7_t_1000 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_1000$out_sim$gamma_mean, 2,
+                                           gamma_7obs_true)
+bias_gamma_uncl_obs_7_t_2000 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_2000$out_sim$gamma_mean, 2,
+                                           gamma_7obs_true)
+bias_gamma_uncl_obs_7_t_4000 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_4000$out_sim$gamma_mean, 2,
+                                           gamma_7obs_true)
+bias_gamma_uncl_obs_7_t_8000 <- sweep(results$sim_HMM_theta_uncl_obs_7_t_8000$out_sim$gamma_mean, 2,
+                                           gamma_7obs_true)
+
+bias_gamma_uncl_obs_7_t_250 <- melt(bias_gamma_uncl_obs_7_t_250)
+colnames(bias_gamma_uncl_obs_7_t_250) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_7_t_500 <- melt(bias_gamma_uncl_obs_7_t_500)
+colnames(bias_gamma_uncl_obs_7_t_500) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_7_t_1000 <- melt(bias_gamma_uncl_obs_7_t_1000)
+colnames(bias_gamma_uncl_obs_7_t_1000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_7_t_2000 <- melt(bias_gamma_uncl_obs_7_t_2000)
+colnames(bias_gamma_uncl_obs_7_t_2000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_7_t_4000 <- melt(bias_gamma_uncl_obs_7_t_4000)
+colnames(bias_gamma_uncl_obs_7_t_4000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_uncl_obs_7_t_8000 <- melt(bias_gamma_uncl_obs_7_t_8000)
+colnames(bias_gamma_uncl_obs_7_t_8000) <- c("Id", "S_to_s", "Abs_bias")
+
+bias_gamma_uncl_obs_7_t_250 <- cbind(bias_gamma_uncl_obs_7_t_250, Length = "250", Nobs = "7")
+bias_gamma_uncl_obs_7_t_500 <- cbind(bias_gamma_uncl_obs_7_t_500, Length = "500", Nobs = "7")
+bias_gamma_uncl_obs_7_t_1000 <- cbind(bias_gamma_uncl_obs_7_t_1000, Length = "1000", Nobs = "7")
+bias_gamma_uncl_obs_7_t_2000 <- cbind(bias_gamma_uncl_obs_7_t_2000, Length = "2000", Nobs = "7")
+bias_gamma_uncl_obs_7_t_4000 <- cbind(bias_gamma_uncl_obs_7_t_4000, Length = "4000", Nobs = "7")
+bias_gamma_uncl_obs_7_t_8000 <- cbind(bias_gamma_uncl_obs_7_t_8000, Length = "8000", Nobs = "7")
+
+uncl_obs_7_gamma <- rbind(data.frame(bias_gamma_uncl_obs_7_t_250), data.frame(bias_gamma_uncl_obs_7_t_500),  
+                          data.frame(bias_gamma_uncl_obs_7_t_1000), data.frame(bias_gamma_uncl_obs_7_t_2000), 
+                          data.frame(bias_gamma_uncl_obs_7_t_4000), data.frame(bias_gamma_uncl_obs_7_t_8000))
+uncl_obs_7_gamma$Length <- factor(uncl_obs_7_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+uncl_obs_7_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, uncl_obs_7_gamma, mean)
+
+# Plot of mean bias gamma.
+num_obs_gamma <- rbind(data.frame(uncl_obs_3_gamma), data.frame(uncl_obs_5_gamma),
+                       data.frame(uncl_obs_7_gamma))
+num_obs_gamma$Nobs <- factor(num_obs_gamma$Nobs, levels = c("3", "5", "7"))
+ggplot(num_obs_gamma, aes(x = Length, y = Abs_bias, color = Nobs, group = Nobs)) +
+  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 3) +
+  geom_point() + geom_line() +  
+  ggtitle("Bias transition probabilities by number of observations and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Bias") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+## Standard deviation.
+
+# 3 observations.
+sd_gamma_uncl_obs_3_t_250 <- melt(results$sim_HMM_theta_uncl_obs_3_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_3_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_3_t_500 <- melt(results$sim_HMM_theta_uncl_obs_3_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_3_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_3_t_1000 <- melt(results$sim_HMM_theta_uncl_obs_3_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_3_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_3_t_2000 <- melt(results$sim_HMM_theta_uncl_obs_3_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_3_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_3_t_4000 <- melt(results$sim_HMM_theta_uncl_obs_3_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_3_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_3_t_8000 <- melt(results$sim_HMM_theta_uncl_obs_3_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_3_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_uncl_obs_3_t_250 <- cbind(sd_gamma_uncl_obs_3_t_250, Length = "250", Nobs = "3")
+sd_gamma_uncl_obs_3_t_500 <- cbind(sd_gamma_uncl_obs_3_t_500, Length = "500", Nobs = "3")
+sd_gamma_uncl_obs_3_t_1000 <- cbind(sd_gamma_uncl_obs_3_t_1000, Length = "1000", Nobs = "3")
+sd_gamma_uncl_obs_3_t_2000 <- cbind(sd_gamma_uncl_obs_3_t_2000, Length = "2000", Nobs = "3")
+sd_gamma_uncl_obs_3_t_4000 <- cbind(sd_gamma_uncl_obs_3_t_4000, Length = "4000", Nobs = "3")
+sd_gamma_uncl_obs_3_t_8000 <- cbind(sd_gamma_uncl_obs_3_t_8000, Length = "8000", Nobs = "3")
+
+sd_uncl_obs_3_gamma <- rbind(data.frame(sd_gamma_uncl_obs_3_t_250), data.frame(sd_gamma_uncl_obs_3_t_500),  
+                            data.frame(sd_gamma_uncl_obs_3_t_1000), data.frame(sd_gamma_uncl_obs_3_t_2000), 
+                            data.frame(sd_gamma_uncl_obs_3_t_4000), data.frame(sd_gamma_uncl_obs_3_t_8000))
+sd_uncl_obs_3_gamma$Length <- factor(sd_uncl_obs_3_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_uncl_obs_3_gamma <- aggregate(Sd ~ Length + S_to_s + Nobs, sd_uncl_obs_3_gamma, mean)
+
+# 5 observations.
+sd_gamma_uncl_obs_5_t_250 <- melt(results$sim_HMM_theta_uncl_obs_5_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_500 <- melt(results$sim_HMM_theta_uncl_obs_5_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_1000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_2000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_4000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_5_t_8000 <- melt(results$sim_HMM_theta_uncl_obs_5_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_uncl_obs_5_t_250 <- cbind(sd_gamma_uncl_obs_5_t_250, Length = "250", Nobs = "5")
+sd_gamma_uncl_obs_5_t_500 <- cbind(sd_gamma_uncl_obs_5_t_500, Length = "500", Nobs = "5")
+sd_gamma_uncl_obs_5_t_1000 <- cbind(sd_gamma_uncl_obs_5_t_1000, Length = "1000", Nobs = "5")
+sd_gamma_uncl_obs_5_t_2000 <- cbind(sd_gamma_uncl_obs_5_t_2000, Length = "2000", Nobs = "5")
+sd_gamma_uncl_obs_5_t_4000 <- cbind(sd_gamma_uncl_obs_5_t_4000, Length = "4000", Nobs = "5")
+sd_gamma_uncl_obs_5_t_8000 <- cbind(sd_gamma_uncl_obs_5_t_8000, Length = "8000", Nobs = "5")
+
+sd_uncl_obs_5_gamma <- rbind(data.frame(sd_gamma_uncl_obs_5_t_250), data.frame(sd_gamma_uncl_obs_5_t_500),  
+                             data.frame(sd_gamma_uncl_obs_5_t_1000), data.frame(sd_gamma_uncl_obs_5_t_2000), 
+                             data.frame(sd_gamma_uncl_obs_5_t_4000), data.frame(sd_gamma_uncl_obs_5_t_8000))
+sd_uncl_obs_5_gamma$Length <- factor(sd_uncl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_uncl_obs_5_gamma <- aggregate(Sd ~ Length + S_to_s + Nobs, sd_uncl_obs_5_gamma, mean)
+
+# 7 observations. 
+sd_gamma_uncl_obs_7_t_250 <- melt(results$sim_HMM_theta_uncl_obs_7_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_7_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_7_t_500 <- melt(results$sim_HMM_theta_uncl_obs_7_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_7_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_7_t_1000 <- melt(results$sim_HMM_theta_uncl_obs_7_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_7_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_7_t_2000 <- melt(results$sim_HMM_theta_uncl_obs_7_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_7_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_7_t_4000 <- melt(results$sim_HMM_theta_uncl_obs_7_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_7_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_uncl_obs_7_t_8000 <- melt(results$sim_HMM_theta_uncl_obs_7_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_uncl_obs_7_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_uncl_obs_7_t_250 <- cbind(sd_gamma_uncl_obs_7_t_250, Length = "250", Nobs = "7")
+sd_gamma_uncl_obs_7_t_500 <- cbind(sd_gamma_uncl_obs_7_t_500, Length = "500", Nobs = "7")
+sd_gamma_uncl_obs_7_t_1000 <- cbind(sd_gamma_uncl_obs_7_t_1000, Length = "1000", Nobs = "7")
+sd_gamma_uncl_obs_7_t_2000 <- cbind(sd_gamma_uncl_obs_7_t_2000, Length = "2000", Nobs = "7")
+sd_gamma_uncl_obs_7_t_4000 <- cbind(sd_gamma_uncl_obs_7_t_4000, Length = "4000", Nobs = "7")
+sd_gamma_uncl_obs_7_t_8000 <- cbind(sd_gamma_uncl_obs_7_t_8000, Length = "8000", Nobs = "7")
+
+sd_uncl_obs_7_gamma <- rbind(data.frame(sd_gamma_uncl_obs_7_t_250), data.frame(sd_gamma_uncl_obs_7_t_500),  
+                             data.frame(sd_gamma_uncl_obs_7_t_1000), data.frame(sd_gamma_uncl_obs_7_t_2000), 
+                             data.frame(sd_gamma_uncl_obs_7_t_4000), data.frame(sd_gamma_uncl_obs_7_t_8000))
+sd_uncl_obs_7_gamma$Length <- factor(sd_uncl_obs_7_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_uncl_obs_7_gamma <- aggregate(Sd ~ Length + S_to_s + Nobs, sd_uncl_obs_7_gamma, mean)
+
+# Plot of standard deviation.
+sd_num_obs_gamma <- rbind(data.frame(sd_uncl_obs_3_gamma), data.frame(sd_uncl_obs_5_gamma),  
+                          data.frame(sd_uncl_obs_7_gamma))
+sd_num_obs_gamma$Nobs <- factor(sd_num_obs_gamma$Nobs, levels = c("3", "5", "7"))
+ggplot(sd_num_obs_gamma, aes(x = Length, y = Sd, color = Nobs, group = Nobs)) +
+  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 3) +
+  geom_point() + geom_line() +  
+  ggtitle("Standard deviation transition probabilities by number of observations and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Standard deviation") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+#############################################################
+### Varying emission probabilities number of observations ###
+#############################################################
+
+### Theta.
+
+## Mean bias theta. 
+
+# Three observations.
+true_theta_three_obs <- c(0.60, 0.20, 0.20,
+                          0.20, 0.60, 0.20,
+                          0.20, 0.20, 0.60)
+bias_varobs_obs_3_t_250 <- sweep(results$sim_HMM_varobs_obs_3_t_250$out_sim$emiss_mean, 2,
+                                 true_theta_three_obs)
+bias_varobs_obs_3_t_500 <- sweep(results$sim_HMM_varobs_obs_3_t_500$out_sim$emiss_mean, 2,
+                                 true_theta_three_obs)
+bias_varobs_obs_3_t_1000 <- sweep(results$sim_HMM_varobs_obs_3_t_1000$out_sim$emiss_mean, 2,
+                                  true_theta_three_obs)
+bias_varobs_obs_3_t_2000 <- sweep(results$sim_HMM_varobs_obs_3_t_2000$out_sim$emiss_mean, 2,
+                                  true_theta_three_obs)
+bias_varobs_obs_3_t_4000 <- sweep(results$sim_HMM_varobs_obs_3_t_4000$out_sim$emiss_mean, 2,
+                                  true_theta_three_obs)
+bias_varobs_obs_3_t_8000 <- sweep(results$sim_HMM_varobs_obs_3_t_8000$out_sim$emiss_mean, 2,
+                                  true_theta_three_obs)
+
+bias_varobs_obs_3_t_250 <- melt(bias_varobs_obs_3_t_250)
+colnames(bias_varobs_obs_3_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_3_t_500 <- melt(bias_varobs_obs_3_t_500)
+colnames(bias_varobs_obs_3_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_3_t_1000 <- melt(bias_varobs_obs_3_t_1000)
+colnames(bias_varobs_obs_3_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_3_t_2000 <- melt(bias_varobs_obs_3_t_2000)
+colnames(bias_varobs_obs_3_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_3_t_4000 <- melt(bias_varobs_obs_3_t_4000)
+colnames(bias_varobs_obs_3_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_3_t_8000 <- melt(bias_varobs_obs_3_t_8000)
+colnames(bias_varobs_obs_3_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_varobs_obs_3_t_250 <- cbind(bias_varobs_obs_3_t_250, Length = "250", Nobs = "3")
+bias_varobs_obs_3_t_500 <- cbind(bias_varobs_obs_3_t_500, Length = "500", Nobs = "3")
+bias_varobs_obs_3_t_1000 <- cbind(bias_varobs_obs_3_t_1000, Length = "1000", Nobs = "3")
+bias_varobs_obs_3_t_2000 <- cbind(bias_varobs_obs_3_t_2000, Length = "2000", Nobs = "3")
+bias_varobs_obs_3_t_4000 <- cbind(bias_varobs_obs_3_t_4000, Length = "4000", Nobs = "3")
+bias_varobs_obs_3_t_8000 <- cbind(bias_varobs_obs_3_t_8000, Length = "8000", Nobs = "3")
+
+var_obs_3_theta <- rbind(data.frame(bias_varobs_obs_3_t_250), data.frame(bias_varobs_obs_3_t_500),  
+                         data.frame(bias_varobs_obs_3_t_1000), data.frame(bias_varobs_obs_3_t_2000), 
+                         data.frame(bias_varobs_obs_3_t_4000), data.frame(bias_varobs_obs_3_t_8000))
+var_obs_3_theta$Length <- factor(var_obs_3_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+var_obs_3_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Nobs, var_obs_3_theta, mean)
+
+### Five observations.
+true_theta_five_obs <- c(0.92, 0.02, 0.02, 0.02, 0.02,
+                         0.02, 0.47, 0.47, 0.02, 0.02,
+                         0.02, 0.02, 0.02, 0.62, 0.32)
+bias_varobs_obs_5_t_250 <- sweep(results$sim_HMM_varobs_obs_5_t_250$out_sim$emiss_mean, 2,
+                                     true_theta_five_obs)
+bias_varobs_obs_5_t_500 <- sweep(results$sim_HMM_varobs_obs_5_t_500$out_sim$emiss_mean, 2,
+                                     true_theta_five_obs)
+bias_varobs_obs_5_t_1000 <- sweep(results$sim_HMM_varobs_obs_5_t_1000$out_sim$emiss_mean, 2,
+                                      true_theta_five_obs)
+bias_varobs_obs_5_t_2000 <- sweep(results$sim_HMM_varobs_obs_5_t_2000$out_sim$emiss_mean, 2,
+                                      true_theta_five_obs)
+bias_varobs_obs_5_t_4000 <- sweep(results$sim_HMM_varobs_obs_5_t_4000$out_sim$emiss_mean, 2,
+                                      true_theta_five_obs)
+bias_varobs_obs_5_t_8000 <- sweep(results$sim_HMM_varobs_obs_5_t_8000$out_sim$emiss_mean, 2,
+                                      true_theta_five_obs)
+
+bias_varobs_obs_5_t_250 <- melt(bias_varobs_obs_5_t_250)
+colnames(bias_varobs_obs_5_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_5_t_500 <- melt(bias_varobs_obs_5_t_500)
+colnames(bias_varobs_obs_5_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_5_t_1000 <- melt(bias_varobs_obs_5_t_1000)
+colnames(bias_varobs_obs_5_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_5_t_2000 <- melt(bias_varobs_obs_5_t_2000)
+colnames(bias_varobs_obs_5_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_5_t_4000 <- melt(bias_varobs_obs_5_t_4000)
+colnames(bias_varobs_obs_5_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_5_t_8000 <- melt(bias_varobs_obs_5_t_8000)
+colnames(bias_varobs_obs_5_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_varobs_obs_5_t_250 <- cbind(bias_varobs_obs_5_t_250, Length = "250", Nobs = "5")
+bias_varobs_obs_5_t_500 <- cbind(bias_varobs_obs_5_t_500, Length = "500", Nobs = "5")
+bias_varobs_obs_5_t_1000 <- cbind(bias_varobs_obs_5_t_1000, Length = "1000", Nobs = "5")
+bias_varobs_obs_5_t_2000 <- cbind(bias_varobs_obs_5_t_2000, Length = "2000", Nobs = "5")
+bias_varobs_obs_5_t_4000 <- cbind(bias_varobs_obs_5_t_4000, Length = "4000", Nobs = "5")
+bias_varobs_obs_5_t_8000 <- cbind(bias_varobs_obs_5_t_8000, Length = "8000", Nobs = "5")
+
+var_obs_5_theta <- rbind(data.frame(bias_varobs_obs_5_t_250), data.frame(bias_varobs_obs_5_t_500),  
+                          data.frame(bias_varobs_obs_5_t_1000), data.frame(bias_varobs_obs_5_t_2000), 
+                          data.frame(bias_varobs_obs_5_t_4000), data.frame(bias_varobs_obs_5_t_8000))
+var_obs_5_theta$Length <- factor(var_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+var_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Nobs, var_obs_5_theta, mean)
+
+### Seven observations.
+true_theta_seven_obs <- c(0.88, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02,
+                          0.02, 0.45, 0.45, 0.02, 0.02, 0.02, 0.02,
+                          0.02, 0.02, 0.02, 0.31, 0.30, 0.31, 0.02)
+bias_varobs_obs_7_t_250 <- sweep(results$sim_HMM_varobs_obs_7_t_250$out_sim$emiss_mean, 2,
+                                     true_theta_seven_obs)
+bias_varobs_obs_7_t_500 <- sweep(results$sim_HMM_varobs_obs_7_t_500$out_sim$emiss_mean, 2,
+                                     true_theta_seven_obs)
+bias_varobs_obs_7_t_1000 <- sweep(results$sim_HMM_varobs_obs_7_t_1000$out_sim$emiss_mean, 2,
+                                      true_theta_seven_obs)
+bias_varobs_obs_7_t_2000 <- sweep(results$sim_HMM_varobs_obs_7_t_2000$out_sim$emiss_mean, 2,
+                                      true_theta_seven_obs)
+bias_varobs_obs_7_t_4000 <- sweep(results$sim_HMM_varobs_obs_7_t_4000$out_sim$emiss_mean, 2,
+                                      true_theta_seven_obs)
+bias_varobs_obs_7_t_8000 <- sweep(results$sim_HMM_varobs_obs_7_t_8000$out_sim$emiss_mean, 2,
+                                      true_theta_seven_obs)
+
+bias_varobs_obs_7_t_250 <- melt(bias_varobs_obs_7_t_250)
+colnames(bias_varobs_obs_7_t_250) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_7_t_500 <- melt(bias_varobs_obs_7_t_500)
+colnames(bias_varobs_obs_7_t_500) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_7_t_1000 <- melt(bias_varobs_obs_7_t_1000)
+colnames(bias_varobs_obs_7_t_1000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_7_t_2000 <- melt(bias_varobs_obs_7_t_2000)
+colnames(bias_varobs_obs_7_t_2000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_7_t_4000 <- melt(bias_varobs_obs_7_t_4000)
+colnames(bias_varobs_obs_7_t_4000) <- c("Id", "S_to_obs", "Abs_bias")
+bias_varobs_obs_7_t_8000 <- melt(bias_varobs_obs_7_t_8000)
+colnames(bias_varobs_obs_7_t_8000) <- c("Id", "S_to_obs", "Abs_bias")
+
+bias_varobs_obs_7_t_250 <- cbind(bias_varobs_obs_7_t_250, Length = "250", Nobs = "7")
+bias_varobs_obs_7_t_500 <- cbind(bias_varobs_obs_7_t_500, Length = "500", Nobs = "7")
+bias_varobs_obs_7_t_1000 <- cbind(bias_varobs_obs_7_t_1000, Length = "1000", Nobs = "7")
+bias_varobs_obs_7_t_2000 <- cbind(bias_varobs_obs_7_t_2000, Length = "2000", Nobs = "7")
+bias_varobs_obs_7_t_4000 <- cbind(bias_varobs_obs_7_t_4000, Length = "4000", Nobs = "7")
+bias_varobs_obs_7_t_8000 <- cbind(bias_varobs_obs_7_t_8000, Length = "8000", Nobs = "7")
+
+var_obs_7_theta <- rbind(data.frame(bias_varobs_obs_7_t_250), data.frame(bias_varobs_obs_7_t_500),  
+                          data.frame(bias_varobs_obs_7_t_1000), data.frame(bias_varobs_obs_7_t_2000), 
+                          data.frame(bias_varobs_obs_7_t_4000), data.frame(bias_varobs_obs_7_t_8000))
+var_obs_7_theta$Length <- factor(var_obs_7_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+var_obs_7_theta$Nobs <- factor(var_obs_7_theta$Nobs, levels = c("3", "5", "7"))
+var_obs_7_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Nobs, var_obs_7_theta, mean)
+
+# Plot of mean bias theta.
+var_obs_theta <- rbind(data.frame(var_obs_3_theta), data.frame(var_obs_5_theta),
+                        data.frame(var_obs_7_theta))
+ggplot(var_obs_theta, aes(x = Length, y = Abs_bias, color = Nobs, group = Nobs)) +
+  facet_wrap(facets = vars(S_to_obs), nrow = 3, ncol = 7) +
+  geom_point() + geom_line() +  
+  ggtitle("Bias emission probabilities by number of observations and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Bias") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+## Standard deviation.
+
+# 3 observations.
+sd_varobs_obs_3_t_250 <- melt(results$sim_HMM_varobs_obs_3_t_250$out_sim$emiss_sd)
+colnames(sd_varobs_obs_3_t_250) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_3_t_500 <- melt(results$sim_HMM_varobs_obs_3_t_500$out_sim$emiss_sd)
+colnames(sd_varobs_obs_3_t_500) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_3_t_1000 <- melt(results$sim_HMM_varobs_obs_3_t_1000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_3_t_1000) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_3_t_2000 <- melt(results$sim_HMM_varobs_obs_3_t_2000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_3_t_2000) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_3_t_4000 <- melt(results$sim_HMM_varobs_obs_3_t_4000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_3_t_4000) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_3_t_8000 <- melt(results$sim_HMM_varobs_obs_3_t_8000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_3_t_8000) <- c("Id", "S_to_obs", "Sd")
+
+sd_varobs_obs_3_t_250 <- cbind(sd_varobs_obs_3_t_250, Length = "250", Nobs = "3")
+sd_varobs_obs_3_t_500 <- cbind(sd_varobs_obs_3_t_500, Length = "500", Nobs = "3")
+sd_varobs_obs_3_t_1000 <- cbind(sd_varobs_obs_3_t_1000, Length = "1000", Nobs = "3")
+sd_varobs_obs_3_t_2000 <- cbind(sd_varobs_obs_3_t_2000, Length = "2000", Nobs = "3")
+sd_varobs_obs_3_t_4000 <- cbind(sd_varobs_obs_3_t_4000, Length = "4000", Nobs = "3")
+sd_varobs_obs_3_t_8000 <- cbind(sd_varobs_obs_3_t_8000, Length = "8000", Nobs = "3")
+
+sd_var_obs_3_theta <- rbind(data.frame(sd_varobs_obs_3_t_250), data.frame(sd_varobs_obs_3_t_500),  
+                             data.frame(sd_varobs_obs_3_t_1000), data.frame(sd_varobs_obs_3_t_2000), 
+                             data.frame(sd_varobs_obs_3_t_4000), data.frame(sd_varobs_obs_3_t_8000))
+sd_var_obs_3_theta$Length <- factor(sd_var_obs_3_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_var_obs_3_theta <- aggregate(Sd ~ Length + S_to_obs + Nobs, sd_var_obs_3_theta, mean)
+
+# 5 observations. 
+sd_varobs_obs_5_t_250 <- melt(results$sim_HMM_varobs_obs_5_t_250$out_sim$emiss_sd)
+colnames(sd_varobs_obs_5_t_250) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_5_t_500 <- melt(results$sim_HMM_varobs_obs_5_t_500$out_sim$emiss_sd)
+colnames(sd_varobs_obs_5_t_500) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_5_t_1000 <- melt(results$sim_HMM_varobs_obs_5_t_1000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_5_t_1000) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_5_t_2000 <- melt(results$sim_HMM_varobs_obs_5_t_2000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_5_t_2000) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_5_t_4000 <- melt(results$sim_HMM_varobs_obs_5_t_4000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_5_t_4000) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_5_t_8000 <- melt(results$sim_HMM_varobs_obs_5_t_8000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_5_t_8000) <- c("Id", "S_to_obs", "Sd")
+
+sd_varobs_obs_5_t_250 <- cbind(sd_varobs_obs_5_t_250, Length = "250", Nobs = "5")
+sd_varobs_obs_5_t_500 <- cbind(sd_varobs_obs_5_t_500, Length = "500", Nobs = "5")
+sd_varobs_obs_5_t_1000 <- cbind(sd_varobs_obs_5_t_1000, Length = "1000", Nobs = "5")
+sd_varobs_obs_5_t_2000 <- cbind(sd_varobs_obs_5_t_2000, Length = "2000", Nobs = "5")
+sd_varobs_obs_5_t_4000 <- cbind(sd_varobs_obs_5_t_4000, Length = "4000", Nobs = "5")
+sd_varobs_obs_5_t_8000 <- cbind(sd_varobs_obs_5_t_8000, Length = "8000", Nobs = "5")
+
+sd_var_obs_5_theta <- rbind(data.frame(sd_varobs_obs_5_t_250), data.frame(sd_varobs_obs_5_t_500),  
+                             data.frame(sd_varobs_obs_5_t_1000), data.frame(sd_varobs_obs_5_t_2000), 
+                             data.frame(sd_varobs_obs_5_t_4000), data.frame(sd_varobs_obs_5_t_8000))
+sd_var_obs_5_theta$Length <- factor(sd_var_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_var_obs_5_theta <- aggregate(Sd ~ Length + S_to_obs + Nobs, sd_var_obs_5_theta, mean)
+
+# 7 observations.  
+sd_varobs_obs_7_t_250 <- melt(results$sim_HMM_varobs_obs_7_t_250$out_sim$emiss_sd)
+colnames(sd_varobs_obs_7_t_250) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_7_t_500 <- melt(results$sim_HMM_varobs_obs_7_t_500$out_sim$emiss_sd)
+colnames(sd_varobs_obs_7_t_500) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_7_t_1000 <- melt(results$sim_HMM_varobs_obs_7_t_1000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_7_t_1000) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_7_t_2000 <- melt(results$sim_HMM_varobs_obs_7_t_2000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_7_t_2000) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_7_t_4000 <- melt(results$sim_HMM_varobs_obs_7_t_4000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_7_t_4000) <- c("Id", "S_to_obs", "Sd")
+sd_varobs_obs_7_t_8000 <- melt(results$sim_HMM_varobs_obs_7_t_8000$out_sim$emiss_sd)
+colnames(sd_varobs_obs_7_t_8000) <- c("Id", "S_to_obs", "Sd")
+
+sd_varobs_obs_7_t_250 <- cbind(sd_varobs_obs_7_t_250, Length = "250", Nobs = "7")
+sd_varobs_obs_7_t_500 <- cbind(sd_varobs_obs_7_t_500, Length = "500", Nobs = "7")
+sd_varobs_obs_7_t_1000 <- cbind(sd_varobs_obs_7_t_1000, Length = "1000", Nobs = "7")
+sd_varobs_obs_7_t_2000 <- cbind(sd_varobs_obs_7_t_2000, Length = "2000", Nobs = "7")
+sd_varobs_obs_7_t_4000 <- cbind(sd_varobs_obs_7_t_4000, Length = "4000", Nobs = "7")
+sd_varobs_obs_7_t_8000 <- cbind(sd_varobs_obs_7_t_8000, Length = "8000", Nobs = "7")
+
+sd_var_obs_7_theta <- rbind(data.frame(sd_varobs_obs_7_t_250), data.frame(sd_varobs_obs_7_t_500),  
+                             data.frame(sd_varobs_obs_7_t_1000), data.frame(sd_varobs_obs_7_t_2000), 
+                             data.frame(sd_varobs_obs_7_t_4000), data.frame(sd_varobs_obs_7_t_8000))
+sd_var_obs_7_theta$Length <- factor(sd_var_obs_7_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_var_obs_7_theta <- aggregate(Sd ~ Length + S_to_obs + Nobs, sd_var_obs_7_theta, mean)
+
+# Plot of standard deviation.
+sd_obs_theta <- rbind(data.frame(sd_var_obs_3_theta), data.frame(sd_var_obs_5_theta),  
+                      data.frame(sd_var_obs_7_theta))
+sd_obs_theta$Nobs <- factor(sd_obs_theta$Nobs, levels = c("3", "5", "7"))
+ggplot(sd_obs_theta, aes(x = Length, y = Sd, color = Nobs, group = Nobs)) +
+  facet_wrap(facets = vars(S_to_obs), nrow = 5, ncol = 5) +
+  geom_point() + geom_line() +  
+  ggtitle("Standard deviation emission probabilities by number of observations and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Standard deviation") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+### Gamma. 
+
+## Mean. 
+
+# 3 observations.
+gamma_3obs_true <- c(0.80, 0.10, 0.10, 
+                     0.10, 0.80, 0.10, 
+                     0.10, 0.10, 0.80) 
+bias_gamma_var_obs_3_t_250 <- sweep(results$sim_HMM_varobs_obs_3_t_250$out_sim$gamma_mean, 2, 
+                                     gamma_3obs_true)
+bias_gamma_var_obs_3_t_500 <- sweep(results$sim_HMM_varobs_obs_3_t_500$out_sim$gamma_mean, 2, 
+                                     gamma_3obs_true)
+bias_gamma_var_obs_3_t_1000 <- sweep(results$sim_HMM_varobs_obs_3_t_1000$out_sim$gamma_mean, 2,
+                                      gamma_3obs_true)
+bias_gamma_var_obs_3_t_2000 <- sweep(results$sim_HMM_varobs_obs_3_t_2000$out_sim$gamma_mean, 2, 
+                                      gamma_3obs_true)
+bias_gamma_var_obs_3_t_4000 <- sweep(results$sim_HMM_varobs_obs_3_t_4000$out_sim$gamma_mean, 2,
+                                      gamma_3obs_true)
+bias_gamma_var_obs_3_t_8000 <- sweep(results$sim_HMM_varobs_obs_3_t_8000$out_sim$gamma_mean, 2, 
+                                      gamma_3obs_true)
+
+bias_gamma_var_obs_3_t_250 <- melt(bias_gamma_var_obs_3_t_250)
+colnames(bias_gamma_var_obs_3_t_250) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_3_t_500 <- melt(bias_gamma_var_obs_3_t_500)
+colnames(bias_gamma_var_obs_3_t_500) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_3_t_1000 <- melt(bias_gamma_var_obs_3_t_1000)
+colnames(bias_gamma_var_obs_3_t_1000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_3_t_2000 <- melt(bias_gamma_var_obs_3_t_2000)
+colnames(bias_gamma_var_obs_3_t_2000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_3_t_4000 <- melt(bias_gamma_var_obs_3_t_4000)
+colnames(bias_gamma_var_obs_3_t_4000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_3_t_8000 <- melt(bias_gamma_var_obs_3_t_8000)
+colnames(bias_gamma_var_obs_3_t_8000) <- c("Id", "S_to_s", "Abs_bias")
+
+bias_gamma_var_obs_3_t_250 <- cbind(bias_gamma_var_obs_3_t_250, Length = "250", Nobs = "3")
+bias_gamma_var_obs_3_t_500 <- cbind(bias_gamma_var_obs_3_t_500, Length = "500", Nobs = "3")
+bias_gamma_var_obs_3_t_1000 <- cbind(bias_gamma_var_obs_3_t_1000, Length = "1000", Nobs = "3")
+bias_gamma_var_obs_3_t_2000 <- cbind(bias_gamma_var_obs_3_t_2000, Length = "2000", Nobs = "3")
+bias_gamma_var_obs_3_t_4000 <- cbind(bias_gamma_var_obs_3_t_4000, Length = "4000", Nobs = "3")
+bias_gamma_var_obs_3_t_8000 <- cbind(bias_gamma_var_obs_3_t_8000, Length = "8000", Nobs = "3")
+
+var_obs_3_gamma <- rbind(data.frame(bias_gamma_var_obs_3_t_250), data.frame(bias_gamma_var_obs_3_t_500),  
+                          data.frame(bias_gamma_var_obs_3_t_1000), data.frame(bias_gamma_var_obs_3_t_2000), 
+                          data.frame(bias_gamma_var_obs_3_t_4000), data.frame(bias_gamma_var_obs_3_t_8000))
+var_obs_3_gamma$Length <- factor(var_obs_3_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+var_obs_3_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, var_obs_3_gamma, mean)
+
+# 5 observations. 
+gamma_5obs_true <- c(0.80, 0.10, 0.10, 
+                     0.10, 0.80, 0.10, 
+                     0.10, 0.10, 0.80)
+bias_gamma_var_obs_5_t_250 <- sweep(results$sim_HMM_varobs_obs_5_t_250$out_sim$gamma_mean, 2,
+                                     gamma_5obs_true)
+bias_gamma_var_obs_5_t_500 <- sweep(results$sim_HMM_varobs_obs_5_t_500$out_sim$gamma_mean, 2,
+                                     gamma_5obs_true)
+bias_gamma_var_obs_5_t_1000 <- sweep(results$sim_HMM_varobs_obs_5_t_1000$out_sim$gamma_mean, 2,
+                                      gamma_5obs_true)
+bias_gamma_var_obs_5_t_2000 <- sweep(results$sim_HMM_varobs_obs_5_t_2000$out_sim$gamma_mean, 2,
+                                      gamma_5obs_true)
+bias_gamma_var_obs_5_t_4000 <- sweep(results$sim_HMM_varobs_obs_5_t_4000$out_sim$gamma_mean, 2,
+                                      gamma_5obs_true)
+bias_gamma_var_obs_5_t_8000 <- sweep(results$sim_HMM_varobs_obs_5_t_8000$out_sim$gamma_mean, 2,
+                                      gamma_5obs_true)
+
+bias_gamma_var_obs_5_t_250 <- melt(bias_gamma_var_obs_5_t_250)
+colnames(bias_gamma_var_obs_5_t_250) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_5_t_500 <- melt(bias_gamma_var_obs_5_t_500)
+colnames(bias_gamma_var_obs_5_t_500) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_5_t_1000 <- melt(bias_gamma_var_obs_5_t_1000)
+colnames(bias_gamma_var_obs_5_t_1000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_5_t_2000 <- melt(bias_gamma_var_obs_5_t_2000)
+colnames(bias_gamma_var_obs_5_t_2000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_5_t_4000 <- melt(bias_gamma_var_obs_5_t_4000)
+colnames(bias_gamma_var_obs_5_t_4000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_5_t_8000 <- melt(bias_gamma_var_obs_5_t_8000)
+colnames(bias_gamma_var_obs_5_t_8000) <- c("Id", "S_to_s", "Abs_bias")
+
+bias_gamma_var_obs_5_t_250 <- cbind(bias_gamma_var_obs_5_t_250, Length = "250", Nobs = "5")
+bias_gamma_var_obs_5_t_500 <- cbind(bias_gamma_var_obs_5_t_500, Length = "500", Nobs = "5")
+bias_gamma_var_obs_5_t_1000 <- cbind(bias_gamma_var_obs_5_t_1000, Length = "1000", Nobs = "5")
+bias_gamma_var_obs_5_t_2000 <- cbind(bias_gamma_var_obs_5_t_2000, Length = "2000", Nobs = "5")
+bias_gamma_var_obs_5_t_4000 <- cbind(bias_gamma_var_obs_5_t_4000, Length = "4000", Nobs = "5")
+bias_gamma_var_obs_5_t_8000 <- cbind(bias_gamma_var_obs_5_t_8000, Length = "8000", Nobs = "5")
+
+var_obs_5_gamma <- rbind(data.frame(bias_gamma_var_obs_5_t_250), data.frame(bias_gamma_var_obs_5_t_500),  
+                          data.frame(bias_gamma_var_obs_5_t_1000), data.frame(bias_gamma_var_obs_5_t_2000), 
+                          data.frame(bias_gamma_var_obs_5_t_4000), data.frame(bias_gamma_var_obs_5_t_8000))
+var_obs_5_gamma$Length <- factor(var_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+var_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, var_obs_5_gamma, mean)
+
+# 7 observations. 
+gamma_7obs_true <- c(0.80, 0.10, 0.10, 
+                     0.10, 0.80, 0.10, 
+                     0.10, 0.10, 0.80)
+bias_gamma_var_obs_7_t_250 <- sweep(results$sim_HMM_varobs_obs_7_t_250$out_sim$gamma_mean, 2,
+                                     gamma_7obs_true) 
+bias_gamma_var_obs_7_t_500 <- sweep(results$sim_HMM_varobs_obs_7_t_500$out_sim$gamma_mean, 2,
+                                     gamma_7obs_true) 
+bias_gamma_var_obs_7_t_1000 <- sweep(results$sim_HMM_varobs_obs_7_t_1000$out_sim$gamma_mean, 2,
+                                      gamma_7obs_true)
+bias_gamma_var_obs_7_t_2000 <- sweep(results$sim_HMM_varobs_obs_7_t_2000$out_sim$gamma_mean, 2,
+                                      gamma_7obs_true)
+bias_gamma_var_obs_7_t_4000 <- sweep(results$sim_HMM_varobs_obs_7_t_4000$out_sim$gamma_mean, 2,
+                                      gamma_7obs_true)
+bias_gamma_var_obs_7_t_8000 <- sweep(results$sim_HMM_varobs_obs_7_t_8000$out_sim$gamma_mean, 2,
+                                      gamma_7obs_true)
+
+bias_gamma_var_obs_7_t_250 <- melt(bias_gamma_var_obs_7_t_250)
+colnames(bias_gamma_var_obs_7_t_250) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_7_t_500 <- melt(bias_gamma_var_obs_7_t_500)
+colnames(bias_gamma_var_obs_7_t_500) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_7_t_1000 <- melt(bias_gamma_var_obs_7_t_1000)
+colnames(bias_gamma_var_obs_7_t_1000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_7_t_2000 <- melt(bias_gamma_var_obs_7_t_2000)
+colnames(bias_gamma_var_obs_7_t_2000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_7_t_4000 <- melt(bias_gamma_var_obs_7_t_4000)
+colnames(bias_gamma_var_obs_7_t_4000) <- c("Id", "S_to_s", "Abs_bias")
+bias_gamma_var_obs_7_t_8000 <- melt(bias_gamma_var_obs_7_t_8000)
+colnames(bias_gamma_var_obs_7_t_8000) <- c("Id", "S_to_s", "Abs_bias")
+
+bias_gamma_var_obs_7_t_250 <- cbind(bias_gamma_var_obs_7_t_250, Length = "250", Nobs = "7")
+bias_gamma_var_obs_7_t_500 <- cbind(bias_gamma_var_obs_7_t_500, Length = "500", Nobs = "7")
+bias_gamma_var_obs_7_t_1000 <- cbind(bias_gamma_var_obs_7_t_1000, Length = "1000", Nobs = "7")
+bias_gamma_var_obs_7_t_2000 <- cbind(bias_gamma_var_obs_7_t_2000, Length = "2000", Nobs = "7")
+bias_gamma_var_obs_7_t_4000 <- cbind(bias_gamma_var_obs_7_t_4000, Length = "4000", Nobs = "7")
+bias_gamma_var_obs_7_t_8000 <- cbind(bias_gamma_var_obs_7_t_8000, Length = "8000", Nobs = "7")
+
+var_obs_7_gamma <- rbind(data.frame(bias_gamma_var_obs_7_t_250), data.frame(bias_gamma_var_obs_7_t_500),  
+                          data.frame(bias_gamma_var_obs_7_t_1000), data.frame(bias_gamma_var_obs_7_t_2000), 
+                          data.frame(bias_gamma_var_obs_7_t_4000), data.frame(bias_gamma_var_obs_7_t_8000))
+var_obs_7_gamma$Length <- factor(var_obs_7_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+var_obs_7_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, var_obs_7_gamma, mean)
+
+# Plot of mean bias gamma.
+num_obs_gamma <- rbind(data.frame(var_obs_3_gamma), data.frame(var_obs_5_gamma),
+                       data.frame(var_obs_7_gamma))
+num_obs_gamma$Nobs <- factor(num_obs_gamma$Nobs, levels = c("3", "5", "7"))
+ggplot(num_obs_gamma, aes(x = Length, y = Abs_bias, color = Nobs, group = Nobs)) +
+  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 3) +
+  geom_point() + geom_line() +  
+  ggtitle("Bias transition probabilities by number of observations and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Bias") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+## Standard deviation.
+
+# 3 observations.
+sd_gamma_var_obs_3_t_250 <- melt(results$sim_HMM_varobs_obs_3_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_3_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_3_t_500 <- melt(results$sim_HMM_varobs_obs_3_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_3_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_3_t_1000 <- melt(results$sim_HMM_varobs_obs_3_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_3_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_3_t_2000 <- melt(results$sim_HMM_varobs_obs_3_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_3_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_3_t_4000 <- melt(results$sim_HMM_varobs_obs_3_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_3_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_3_t_8000 <- melt(results$sim_HMM_varobs_obs_3_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_3_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_var_obs_3_t_250 <- cbind(sd_gamma_var_obs_3_t_250, Length = "250", Nobs = "3")
+sd_gamma_var_obs_3_t_500 <- cbind(sd_gamma_var_obs_3_t_500, Length = "500", Nobs = "3")
+sd_gamma_var_obs_3_t_1000 <- cbind(sd_gamma_var_obs_3_t_1000, Length = "1000", Nobs = "3")
+sd_gamma_var_obs_3_t_2000 <- cbind(sd_gamma_var_obs_3_t_2000, Length = "2000", Nobs = "3")
+sd_gamma_var_obs_3_t_4000 <- cbind(sd_gamma_var_obs_3_t_4000, Length = "4000", Nobs = "3")
+sd_gamma_var_obs_3_t_8000 <- cbind(sd_gamma_var_obs_3_t_8000, Length = "8000", Nobs = "3")
+
+sd_var_obs_3_gamma <- rbind(data.frame(sd_gamma_var_obs_3_t_250), data.frame(sd_gamma_var_obs_3_t_500),  
+                             data.frame(sd_gamma_var_obs_3_t_1000), data.frame(sd_gamma_var_obs_3_t_2000), 
+                             data.frame(sd_gamma_var_obs_3_t_4000), data.frame(sd_gamma_var_obs_3_t_8000))
+sd_var_obs_3_gamma$Length <- factor(sd_var_obs_3_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_var_obs_3_gamma <- aggregate(Sd ~ Length + S_to_s + Nobs, sd_var_obs_3_gamma, mean)
+
+# 5 observations.
+sd_gamma_var_obs_5_t_250 <- melt(results$sim_HMM_varobs_obs_5_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_5_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_5_t_500 <- melt(results$sim_HMM_varobs_obs_5_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_5_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_5_t_1000 <- melt(results$sim_HMM_varobs_obs_5_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_5_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_5_t_2000 <- melt(results$sim_HMM_varobs_obs_5_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_5_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_5_t_4000 <- melt(results$sim_HMM_varobs_obs_5_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_5_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_5_t_8000 <- melt(results$sim_HMM_varobs_obs_5_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_5_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_var_obs_5_t_250 <- cbind(sd_gamma_var_obs_5_t_250, Length = "250", Nobs = "5")
+sd_gamma_var_obs_5_t_500 <- cbind(sd_gamma_var_obs_5_t_500, Length = "500", Nobs = "5")
+sd_gamma_var_obs_5_t_1000 <- cbind(sd_gamma_var_obs_5_t_1000, Length = "1000", Nobs = "5")
+sd_gamma_var_obs_5_t_2000 <- cbind(sd_gamma_var_obs_5_t_2000, Length = "2000", Nobs = "5")
+sd_gamma_var_obs_5_t_4000 <- cbind(sd_gamma_var_obs_5_t_4000, Length = "4000", Nobs = "5")
+sd_gamma_var_obs_5_t_8000 <- cbind(sd_gamma_var_obs_5_t_8000, Length = "8000", Nobs = "5")
+
+sd_var_obs_5_gamma <- rbind(data.frame(sd_gamma_var_obs_5_t_250), data.frame(sd_gamma_var_obs_5_t_500),  
+                             data.frame(sd_gamma_var_obs_5_t_1000), data.frame(sd_gamma_var_obs_5_t_2000), 
+                             data.frame(sd_gamma_var_obs_5_t_4000), data.frame(sd_gamma_var_obs_5_t_8000))
+sd_var_obs_5_gamma$Length <- factor(sd_var_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_var_obs_5_gamma <- aggregate(Sd ~ Length + S_to_s + Nobs, sd_var_obs_5_gamma, mean)
+
+# 7 observations. 
+sd_gamma_var_obs_7_t_250 <- melt(results$sim_HMM_varobs_obs_7_t_250$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_7_t_250) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_7_t_500 <- melt(results$sim_HMM_varobs_obs_7_t_500$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_7_t_500) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_7_t_1000 <- melt(results$sim_HMM_varobs_obs_7_t_1000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_7_t_1000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_7_t_2000 <- melt(results$sim_HMM_varobs_obs_7_t_2000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_7_t_2000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_7_t_4000 <- melt(results$sim_HMM_varobs_obs_7_t_4000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_7_t_4000) <- c("Id", "S_to_s", "Sd")
+sd_gamma_var_obs_7_t_8000 <- melt(results$sim_HMM_varobs_obs_7_t_8000$out_sim$gamma_sd)
+colnames(sd_gamma_var_obs_7_t_8000) <- c("Id", "S_to_s", "Sd")
+
+sd_gamma_var_obs_7_t_250 <- cbind(sd_gamma_var_obs_7_t_250, Length = "250", Nobs = "7")
+sd_gamma_var_obs_7_t_500 <- cbind(sd_gamma_var_obs_7_t_500, Length = "500", Nobs = "7")
+sd_gamma_var_obs_7_t_1000 <- cbind(sd_gamma_var_obs_7_t_1000, Length = "1000", Nobs = "7")
+sd_gamma_var_obs_7_t_2000 <- cbind(sd_gamma_var_obs_7_t_2000, Length = "2000", Nobs = "7")
+sd_gamma_var_obs_7_t_4000 <- cbind(sd_gamma_var_obs_7_t_4000, Length = "4000", Nobs = "7")
+sd_gamma_var_obs_7_t_8000 <- cbind(sd_gamma_var_obs_7_t_8000, Length = "8000", Nobs = "7")
+
+sd_var_obs_7_gamma <- rbind(data.frame(sd_gamma_var_obs_7_t_250), data.frame(sd_gamma_var_obs_7_t_500),  
+                             data.frame(sd_gamma_var_obs_7_t_1000), data.frame(sd_gamma_var_obs_7_t_2000), 
+                             data.frame(sd_gamma_var_obs_7_t_4000), data.frame(sd_gamma_var_obs_7_t_8000))
+sd_var_obs_7_gamma$Length <- factor(sd_var_obs_7_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
+sd_var_obs_7_gamma <- aggregate(Sd ~ Length + S_to_s + Nobs, sd_var_obs_7_gamma, mean)
+
+# Plot of standard deviation.
+sd_num_obs_gamma <- rbind(data.frame(sd_var_obs_3_gamma), data.frame(sd_var_obs_5_gamma),  
+                          data.frame(sd_var_obs_7_gamma))
+sd_num_obs_gamma$Nobs <- factor(sd_num_obs_gamma$Nobs, levels = c("3", "5", "7"))
+ggplot(sd_num_obs_gamma, aes(x = Length, y = Sd, color = Nobs, group = Nobs)) +
+  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 3) +
+  geom_point() + geom_line() +  
+  ggtitle("Standard deviation transition probabilities by number of observations and sequence length") +
+  xlab("Sequence length") + 
+  ylab("Standard deviation") +
+  geom_hline(yintercept = 0) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
+
+### Save plots to dir. 
+plots.dir.path <- list.files(tempdir(), pattern="rs-graphics", full.names = TRUE); 
+plots.png.paths <- list.files(plots.dir.path, pattern=".png", full.names = TRUE)
+file.copy(from=plots.png.paths, to="D:\\Academia\\Paper HMM\\Plots")
+
