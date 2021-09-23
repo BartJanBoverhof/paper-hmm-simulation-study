@@ -20,8 +20,8 @@ gamma <-  matrix(c(0.80, 0.10, 0.10,
                    0.10, 0.10, 0.80), byrow = TRUE, nrow  = m)
 
 theta.5obs <- matrix(c(0.92, 0.02, 0.02, 0.02, 0.02,
-                       0.02, 0.47, 0.47, 0.02, 0.02,
-                       0.02, 0.02, 0.02, 0.62, 0.32), byrow = TRUE, nrow = m)
+                       0.02, 0.47, 0.02, 0.47, 0.02,
+                       0.02, 0.02, 0.62, 0.02, 0.32), byrow = TRUE, nrow = m)
 
 # simulate data
 data1 <- rep(list(NULL), n_sim)
@@ -38,10 +38,9 @@ st_gamma <- matrix(c(0.70, 0.10, 0.20,
                      0.10, 0.70, 0.20, 
                      0.10, 0.20, 0.70), byrow = TRUE, nrow  = m) 
 
-st_emiss_distr <- matrix(c(0.56, 0.11, 0.11, 0.11, 0.11,
-                           0.10, 0.36, 0.36, 0.09, 0.09,
-                           0.09, 0.10, 0.09, 0.36, 0.36), byrow = TRUE, nrow = m)
-
+st_emiss_distr <- matrix(c(0.60, 0.10, 0.10, 0.10, 0.10,
+                           0.10, 0.36, 0.09, 0.36, 0.09,
+                           0.09, 0.10, 0.36, 0.09, 0.36), byrow = TRUE, nrow = m)
 
 emiss_med             <- matrix(, nrow = n_sim, ncol = m * q_emiss)
 colnames(emiss_med)   <- paste("S", rep(c(1:m), each = q_emiss), "_cat", rep(1:q_emiss, m), sep = "")

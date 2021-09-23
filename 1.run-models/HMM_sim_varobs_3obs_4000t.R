@@ -19,10 +19,9 @@ gamma <-  matrix(c(0.80, 0.10, 0.10,
                    0.10, 0.80, 0.10, 
                    0.10, 0.10, 0.80), byrow = TRUE, nrow  = m)
 
-theta.3obs <- matrix(c(0.60, 0.20, 0.20,
-                       0.20, 0.60, 0.20,
-                       0.20, 0.20, 0.60), byrow = TRUE, nrow = m)
-
+theta.3obs <- matrix(c(0.80, 0.10, 0.10,
+                       0.10, 0.80, 0.10,
+                       0.10, 0.10, 0.80), byrow = TRUE, nrow = m)
 # simulate data
 data1 <- rep(list(NULL), n_sim)
 set.seed(2145)

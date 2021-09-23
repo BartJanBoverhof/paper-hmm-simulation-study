@@ -20,8 +20,8 @@ gamma <-  matrix(c(0.80, 0.10, 0.10,
                    0.10, 0.10, 0.80), byrow = TRUE, nrow  = m)
 
 theta.clear <- matrix(c(0.92, 0.02, 0.02, 0.02, 0.02,
-                        0.02, 0.47, 0.47, 0.02, 0.02,
-                        0.02, 0.02, 0.02, 0.47, 0.47), byrow = TRUE, nrow = m)
+                        0.02, 0.47, 0.02, 0.47, 0.02,
+                        0.02, 0.02, 0.47, 0.02, 0.47), byrow = TRUE, nrow = m)
 
 # simulate data
 data1 <- rep(list(NULL), n_sim)
@@ -39,8 +39,8 @@ st_gamma <- matrix(c(0.70, 0.10, 0.20,
                      0.10, 0.20, 0.70), byrow = TRUE, nrow  = m) 
 
 st_emiss_distr <-  matrix(c(0.60, 0.10, 0.10, 0.10, 0.10,
-                            0.10, 0.35, 0.35, 0.10, 0.10,
-                            0.10, 0.10, 0.10, 0.35, 0.35), byrow = TRUE, nrow = m)
+                            0.10, 0.35, 0.10, 0.35, 0.10,
+                            0.10, 0.10, 0.35, 0.10, 0.35), byrow = TRUE, nrow = m)
 
 
 emiss_med             <- matrix(, nrow = n_sim, ncol = m * q_emiss)
