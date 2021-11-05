@@ -9,7 +9,7 @@ burn_in <- 1000
 
 # Set n subjects with each n_t observations:
 n <- 1
-n_t <- 500
+n_t <- 250
 
 # (baseline) model properties
 m <- 3
@@ -29,7 +29,7 @@ set.seed(2145)
 
 for(sim_i in 1:n_sim){
   data1[[sim_i]] <- sim_mHMM(n_t = n_t, n = n, m = m, q_emiss = q_emiss,
-                             gamma = gamma, emiss_distr = theta.much.overlap) 
+                             gamma = gamma, emiss_distr = list(theta.much.overlap)) 
 }
 
 ## settings for analysis

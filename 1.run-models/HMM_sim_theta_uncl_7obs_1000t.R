@@ -30,7 +30,7 @@ set.seed(2145)
 
 for(sim_i in 1:n_sim){
   data1[[sim_i]] <- sim_mHMM(n_t = n_t, n = n, m = m, q_emiss = q_emiss,
-                             gamma = gamma, emiss_distr = theta.unclear) 
+                             gamma = gamma, emiss_distr = list(theta.unclear)) 
 }
 
 ## settings for analysis

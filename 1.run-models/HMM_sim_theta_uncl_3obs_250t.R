@@ -20,8 +20,8 @@ gamma <-  matrix(c(0.80, 0.10, 0.10,
                    0.10, 0.10, 0.80), byrow = TRUE, nrow  = m)
 
 theta.unclear <- matrix(c(0.52, 0.24, 0.24,
-                         0.24, 0.52, 0.24,
-                         0.24, 0.24, 0.52), byrow = TRUE, nrow = m)
+                          0.24, 0.52, 0.24,
+                          0.24, 0.24, 0.52), byrow = TRUE, nrow = m)
 
 # simulate data
 data1 <- rep(list(NULL), n_sim)
