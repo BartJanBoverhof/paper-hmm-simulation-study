@@ -19,8 +19,7 @@ library(ggh4x)
 library(plyr)
 
 ### Set working directory. 
-setwd("C:\\Academia\\HMM paper\\Data\\Data")
-
+setwd("~/Documents/GitHub/paper-hmm-simulation-study/data")
 ### Function for assigning datasets to list.
 rda2list <- function(file) {
   e <- new.env()
@@ -71,7 +70,7 @@ for (i in 1: length(length_strings)){
   assign(paste0("bias_theta_modcl_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_modcl_obs_5_t_", length_strings[i], "$out_sim$emiss_mean"))), 
                2, theta_mod_true)) 
-  
+
   assign(paste0("bias_theta_modcl_obs_5_t_", length_strings[i]), 
          melt(eval(parse(text = paste0("bias_theta_modcl_obs_5_t_", length_strings[i])))))
   
