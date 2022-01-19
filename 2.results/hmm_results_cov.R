@@ -12,11 +12,14 @@ if(!require(reshape)) install.packages("reshape")
 if(!require(ggplot2)) install.packages("ggplot2")
 if(!require(ggh4x)) install.packages("ggh4x")
 if(!require(plyr)) install.packages("plyr")
+if(!require(plyr)) install.packages("tidyverse")
+
 library(data.table)
 library(reshape)
 library(ggplot2)
 library(ggh4x)
 library(plyr)
+library(tidyverse)
 
 ### Set working directory. 
 setwd("~/Documents/GitHub/paper-hmm-simulation-study/data")
@@ -56,69 +59,88 @@ theta_unclear_true <- c(0.44, 0.14, 0.14, 0.14, 0.14,
 
 for (i in 1: length(length_strings)){
   
-  assign(paste0("bias_theta_cl_obs_5_t_", length_strings[i]), 
+  assign(paste0("cov_theta_cl_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_cl_obs_5_t_", length_strings[i], "$out_sim$emiss_mean"))), 
                2, 0)) 
   
-  assign(paste0("bias_theta_cl_obs_5_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_theta_cl_obs_5_t_", length_strings[i])))))
+  assign(paste0("cov_theta_cl_obs_5_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_theta_cl_obs_5_t_", length_strings[i])))))
   
-  assign(paste0("bias_theta_cl_obs_5_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_theta_cl_obs_5_t_", length_strings[i]))), 
-               Length = length_strings[i], Clarity = "Clear", CILow = as.vector(results$sim_HMM_theta_cl_obs_5_t_1000$out_sim$emiss_low)))
-              #Voor mekaar gekregen om de CILOw toe te voegen. Nu nog CI UP, en automatiseren (nu hardcoded)
+  assign(paste0("cov_theta_cl_obs_5_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_theta_cl_obs_5_t_", length_strings[i]))), 
+               Length = length_strings[i], Clarity = "Clear", 
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_cl_obs_5_t_", length_strings[i], "$out_sim$emiss_low")))),
+               CIHigh = as.vector(  eval(parse(text = paste0("results$sim_HMM_theta_cl_obs_5_t_", length_strings[i], "$out_sim$emiss_up"))))))
 
 
-  assign(paste0("bias_theta_modcl_obs_5_t_", length_strings[i]), 
+
+  assign(paste0("cov_theta_modcl_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_modcl_obs_5_t_", length_strings[i], "$out_sim$emiss_mean"))), 
-               2, theta_mod_true)) 
+               2, 0)) 
   
-  assign(paste0("bias_theta_modcl_obs_5_t_", length_strings[i]), 
-         as.vector(results$sim_HMM_theta_cl_obs_5_t_1000$out_sim$emiss_low))
+  assign(paste0("cov_theta_modcl_obs_5_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_theta_modcl_obs_5_t_", length_strings[i])))))
   
-  assign(paste0("bias_theta_modcl_obs_5_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_theta_modcl_obs_5_t_", length_strings[i])))))
+  assign(paste0("cov_theta_modcl_obs_5_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_theta_modcl_obs_5_t_", length_strings[i]))), 
+               Length = length_strings[i], Clarity = "Moderate", 
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_modcl_obs_5_t_", length_strings[i], "$out_sim$emiss_low")))),
+               CIHigh = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_modcl_obs_5_t_", length_strings[i], "$out_sim$emiss_up"))))))
   
-  assign(paste0("bias_theta_modcl_obs_5_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_theta_modcl_obs_5_t_", length_strings[i]))), 
-               Length = length_strings[i], Clarity = "Moderate"))
   
-  assign(paste0("bias_theta_uncl_obs_5_t_", length_strings[i]), 
+  
+  assign(paste0("cov_theta_uncl_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_5_t_", length_strings[i], "$out_sim$emiss_mean"))), 
-               2, theta_unclear_true)) 
+               2, 0)) 
   
-  assign(paste0("bias_theta_uncl_obs_5_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_theta_uncl_obs_5_t_", length_strings[i])))))
+  assign(paste0("cov_theta_uncl_obs_5_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_theta_uncl_obs_5_t_", length_strings[i])))))
   
-  assign(paste0("bias_theta_uncl_obs_5_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_theta_uncl_obs_5_t_", length_strings[i]))), 
-               Length = length_strings[i], Clarity = "Unclear"))
+  assign(paste0("cov_theta_uncl_obs_5_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_theta_uncl_obs_5_t_", length_strings[i]))), 
+               Length = length_strings[i], Clarity = "Unclear", 
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_5_t_", length_strings[i], "$out_sim$emiss_low")))),
+               CIHigh = as.vector(  eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_5_t_", length_strings[i], "$out_sim$emiss_up"))))))
+  
   
 }
 
 ## Clear.
-cl_obs_5_theta <- rbind(data.frame(bias_theta_cl_obs_5_t_250), data.frame(bias_theta_cl_obs_5_t_500),  
-                        data.frame(bias_theta_cl_obs_5_t_1000), data.frame(bias_theta_cl_obs_5_t_2000), 
-                        data.frame(bias_theta_cl_obs_5_t_4000), data.frame(bias_theta_cl_obs_5_t_8000))
-colnames(cl_obs_5_theta) <- c("Id", "S_to_obs", "Abs_bias", "Length", "Clarity")
+cl_obs_5_theta <- rbind(data.frame(cov_theta_cl_obs_5_t_250), data.frame(cov_theta_cl_obs_5_t_500),  
+                        data.frame(cov_theta_cl_obs_5_t_1000), data.frame(cov_theta_cl_obs_5_t_2000), 
+                        data.frame(cov_theta_cl_obs_5_t_4000), data.frame(cov_theta_cl_obs_5_t_8000))
+
+cl_obs_5_theta <- cl_obs_5_theta %>% mutate(Coverage = ifelse((value > CILow & value < CIHigh),1,0))
+colnames(cl_obs_5_theta) <- c("Id", "S_to_obs", "Estimate", "Length", "Clarity","CiLow", "CiHigh","Coverage")
+
 cl_obs_5_theta$Length <- factor(cl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-cl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Clarity, cl_obs_5_theta, mean)
+cl_obs_5_theta <- aggregate(Coverage ~ Length + S_to_obs + Clarity, cl_obs_5_theta, mean)
+
 
 ## Moderately clear. 
-modcl_obs_5_theta <- rbind(data.frame(bias_theta_modcl_obs_5_t_250), data.frame(bias_theta_modcl_obs_5_t_500),  
-                           data.frame(bias_theta_modcl_obs_5_t_1000), data.frame(bias_theta_modcl_obs_5_t_2000), 
-                           data.frame(bias_theta_modcl_obs_5_t_4000), data.frame(bias_theta_modcl_obs_5_t_8000))
-colnames(modcl_obs_5_theta) <- c("Id", "S_to_obs", "Abs_bias", "Length", "Clarity")
+modcl_obs_5_theta <- rbind(data.frame(cov_theta_modcl_obs_5_t_250), data.frame(cov_theta_modcl_obs_5_t_500),  
+                        data.frame(cov_theta_modcl_obs_5_t_1000), data.frame(cov_theta_modcl_obs_5_t_2000), 
+                        data.frame(cov_theta_modcl_obs_5_t_4000), data.frame(cov_theta_modcl_obs_5_t_8000))
+
+modcl_obs_5_theta <- modcl_obs_5_theta %>% mutate(Coverage = ifelse((value > CILow & value < CIHigh),1,0))
+colnames(modcl_obs_5_theta) <- c("Id", "S_to_obs", "Estimate", "Length", "Clarity","CiLow", "CiHigh","Coverage")
+
 modcl_obs_5_theta$Length <- factor(modcl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-modcl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Clarity, modcl_obs_5_theta, mean)
+modcl_obs_5_theta <- aggregate(Coverage ~ Length + S_to_obs + Clarity, modcl_obs_5_theta, mean)
+
 
 ## Unclear. 
-uncl_obs_5_theta <- rbind(data.frame(bias_theta_uncl_obs_5_t_250), data.frame(bias_theta_uncl_obs_5_t_500),  
-                          data.frame(bias_theta_uncl_obs_5_t_1000), data.frame(bias_theta_uncl_obs_5_t_2000), 
-                          data.frame(bias_theta_uncl_obs_5_t_4000), data.frame(bias_theta_uncl_obs_5_t_8000))
-colnames(uncl_obs_5_theta) <- c("Id", "S_to_obs", "Abs_bias", "Length", "Clarity")
+uncl_obs_5_theta <- rbind(data.frame(cov_theta_uncl_obs_5_t_250), data.frame(cov_theta_uncl_obs_5_t_500),  
+                        data.frame(cov_theta_uncl_obs_5_t_1000), data.frame(cov_theta_uncl_obs_5_t_2000), 
+                        data.frame(cov_theta_uncl_obs_5_t_4000), data.frame(cov_theta_uncl_obs_5_t_8000))
+
+uncl_obs_5_theta <- uncl_obs_5_theta %>% mutate(Coverage = ifelse((value > CILow & value < CIHigh),1,0))
+colnames(uncl_obs_5_theta) <- c("Id", "S_to_obs", "Estimate", "Length", "Clarity","CiLow", "CiHigh","Coverage")
+
 uncl_obs_5_theta$Length <- factor(uncl_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-uncl_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Clarity, uncl_obs_5_theta, mean)
+uncl_obs_5_theta <- aggregate(Coverage ~ Length + S_to_obs + Clarity, uncl_obs_5_theta, mean)
+
+
 
 ## Plot of bias emission probabilities by clarity and sequence length.
 obs_5_theta <- rbind(data.frame(cl_obs_5_theta), data.frame(modcl_obs_5_theta),  
