@@ -448,7 +448,7 @@ ggplot(overl_5_theta, aes(x = Length, y = Coverage, color = Overlap, group = Ove
   ylab("Bias") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0, 01) 
+  ylim(0, 1) 
 
 
 ### Gamma.
@@ -704,69 +704,90 @@ ggplot(uncl_obs_theta, aes(x = Length, y = Coverage, color = Nobs, group = Nobs)
 ### Gamma. 
 for (i in 1: length(length_strings)){
   
-  assign(paste0("bias_gamma_uncl_obs_3_t_", length_strings[i]), 
+  assign(paste0("cov_gamma_uncl_obs_3_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_3_t_", length_strings[i], "$out_sim$gamma_mean"))), 
-               2, gamma_true)) 
+               2, 0)) 
   
-  assign(paste0("bias_gamma_uncl_obs_3_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_gamma_uncl_obs_3_t_", length_strings[i])))))
+  assign(paste0("cov_gamma_uncl_obs_3_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_gamma_uncl_obs_3_t_", length_strings[i])))))
   
-  assign(paste0("bias_gamma_uncl_obs_3_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_gamma_uncl_obs_3_t_", length_strings[i]))), 
-               Length = length_strings[i], Nobs = "3"))
+  assign(paste0("cov_gamma_uncl_obs_3_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_gamma_uncl_obs_3_t_", length_strings[i]))), 
+               Length = length_strings[i], Nobs = "3", 
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_3_t_", length_strings[i], "$out_sim$gamma_low")))),
+               CIHigh = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_3_t_", length_strings[i], "$out_sim$gamma_up"))))))
+               
   
-  assign(paste0("bias_gamma_uncl_obs_5_t_", length_strings[i]), 
+  assign(paste0("cov_gamma_uncl_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_5_t_", length_strings[i], "$out_sim$gamma_mean"))), 
-               2, gamma_true)) 
+               2, 0)) 
   
-  assign(paste0("bias_gamma_uncl_obs_5_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_gamma_uncl_obs_5_t_", length_strings[i])))))
+  assign(paste0("cov_gamma_uncl_obs_5_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_gamma_uncl_obs_5_t_", length_strings[i])))))
   
-  assign(paste0("bias_gamma_uncl_obs_5_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_gamma_uncl_obs_5_t_", length_strings[i]))), 
-               Length = length_strings[i], Nobs = "5"))
-  
-  assign(paste0("bias_gamma_uncl_obs_7_t_", length_strings[i]), 
+  assign(paste0("cov_gamma_uncl_obs_5_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_gamma_uncl_obs_5_t_", length_strings[i]))), 
+               Length = length_strings[i], Nobs = "5", 
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_5_t_", length_strings[i], "$out_sim$gamma_low")))),
+               CIHigh = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_5_t_", length_strings[i], "$out_sim$gamma_up"))))))
+
+  assign(paste0("cov_gamma_uncl_obs_7_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_7_t_", length_strings[i], "$out_sim$gamma_mean"))), 
-               2, gamma_true)) 
+               2, 0)) 
   
-  assign(paste0("bias_gamma_uncl_obs_7_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_gamma_uncl_obs_7_t_", length_strings[i])))))
+  assign(paste0("cov_gamma_uncl_obs_7_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_gamma_uncl_obs_7_t_", length_strings[i])))))
   
-  assign(paste0("bias_gamma_uncl_obs_7_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_gamma_uncl_obs_7_t_", length_strings[i]))), 
-               Length = length_strings[i], Nobs = "7"))
+  assign(paste0("cov_gamma_uncl_obs_7_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_gamma_uncl_obs_7_t_", length_strings[i]))), 
+               Length = length_strings[i], Nobs = "7", 
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_7_t_", length_strings[i], "$out_sim$gamma_low")))),
+               CIHigh = as.vector(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_7_t_", length_strings[i], "$out_sim$gamma_up"))))))
   
+  
+
 }
 
 # 3 observations.
-uncl_obs_3_gamma <- rbind(data.frame(bias_gamma_uncl_obs_3_t_250), data.frame(bias_gamma_uncl_obs_3_t_500),  
-                          data.frame(bias_gamma_uncl_obs_3_t_1000), data.frame(bias_gamma_uncl_obs_3_t_2000), 
-                          data.frame(bias_gamma_uncl_obs_3_t_4000), data.frame(bias_gamma_uncl_obs_3_t_8000))
-colnames(uncl_obs_3_gamma) <- c("Id", "S_to_s", "Abs_bias", "Length", "Nobs")
+uncl_obs_3_gamma <- rbind(data.frame(cov_gamma_uncl_obs_3_t_250), data.frame(cov_gamma_uncl_obs_3_t_500),  
+                          data.frame(cov_gamma_uncl_obs_3_t_1000), data.frame(cov_gamma_uncl_obs_3_t_2000), 
+                          data.frame(cov_gamma_uncl_obs_3_t_4000), data.frame(cov_gamma_uncl_obs_3_t_8000))
+
+uncl_obs_3_gamma <- full_join(uncl_obs_3_gamma, gamma_true, by = "X2")
+uncl_obs_3_gamma <- uncl_obs_3_gamma %>% mutate(Coverage = ifelse((value > CILow & true < CIHigh),1,0))
+colnames(uncl_obs_3_gamma) <- c("Id", "S_to_obs", "Estimate", "Length", "Nobs","CiLow", "CiHigh","true","Coverage")
+
 uncl_obs_3_gamma$Length <- factor(uncl_obs_3_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-uncl_obs_3_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, uncl_obs_3_gamma, mean)
+uncl_obs_3_gamma <- aggregate(Coverage ~ Length + S_to_obs + Nobs, uncl_obs_3_gamma, mean)
 
 # 5 observations. 
-uncl_obs_5_gamma <- rbind(data.frame(bias_gamma_uncl_obs_5_t_250), data.frame(bias_gamma_uncl_obs_5_t_500),  
-                          data.frame(bias_gamma_uncl_obs_5_t_1000), data.frame(bias_gamma_uncl_obs_5_t_2000), 
-                          data.frame(bias_gamma_uncl_obs_5_t_4000), data.frame(bias_gamma_uncl_obs_5_t_8000))
-colnames(uncl_obs_5_gamma) <- c("Id", "S_to_s", "Abs_bias", "Length", "Nobs")
+uncl_obs_5_gamma <- rbind(data.frame(cov_gamma_uncl_obs_5_t_250), data.frame(cov_gamma_uncl_obs_5_t_500),  
+                          data.frame(cov_gamma_uncl_obs_5_t_1000), data.frame(cov_gamma_uncl_obs_5_t_2000), 
+                          data.frame(cov_gamma_uncl_obs_5_t_4000), data.frame(cov_gamma_uncl_obs_5_t_8000))
+
+uncl_obs_5_gamma <- full_join(uncl_obs_5_gamma, gamma_true, by = "X2")
+uncl_obs_5_gamma <- uncl_obs_5_gamma %>% mutate(Coverage = ifelse((value > CILow & true < CIHigh),1,0))
+colnames(uncl_obs_5_gamma) <- c("Id", "S_to_obs", "Estimate", "Length", "Nobs","CiLow", "CiHigh","true","Coverage")
+
 uncl_obs_5_gamma$Length <- factor(uncl_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-uncl_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, uncl_obs_5_gamma, mean)
+uncl_obs_5_gamma <- aggregate(Coverage ~ Length + S_to_obs + Nobs, uncl_obs_5_gamma, mean)
 
 # 7 observations. 
-uncl_obs_7_gamma <- rbind(data.frame(bias_gamma_uncl_obs_7_t_250), data.frame(bias_gamma_uncl_obs_7_t_500),  
-                          data.frame(bias_gamma_uncl_obs_7_t_1000), data.frame(bias_gamma_uncl_obs_7_t_2000), 
-                          data.frame(bias_gamma_uncl_obs_7_t_4000), data.frame(bias_gamma_uncl_obs_7_t_8000))
-colnames(uncl_obs_7_gamma) <- c("Id", "S_to_s", "Abs_bias", "Length", "Nobs")
+uncl_obs_7_gamma <- rbind(data.frame(cov_gamma_uncl_obs_7_t_250), data.frame(cov_gamma_uncl_obs_7_t_500),  
+                          data.frame(cov_gamma_uncl_obs_7_t_1000), data.frame(cov_gamma_uncl_obs_7_t_2000), 
+                          data.frame(cov_gamma_uncl_obs_7_t_4000), data.frame(cov_gamma_uncl_obs_7_t_8000))
+
+uncl_obs_7_gamma <- full_join(uncl_obs_7_gamma, gamma_true, by = "X2")
+uncl_obs_7_gamma <- uncl_obs_7_gamma %>% mutate(Coverage = ifelse((value > CILow & true < CIHigh),1,0))
+colnames(uncl_obs_7_gamma) <- c("Id", "S_to_obs", "Estimate", "Length", "Nobs","CiLow", "CiHigh","true","Coverage")
+
 uncl_obs_7_gamma$Length <- factor(uncl_obs_7_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-uncl_obs_7_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, uncl_obs_7_gamma, mean)
+uncl_obs_7_gamma <- aggregate(Coverage ~ Length + S_to_obs + Nobs, uncl_obs_7_gamma, mean)
 
 # Plot of bias transition probabilities by number of observations and sequence length,
 num_obs_gamma <- rbind(data.frame(uncl_obs_3_gamma), data.frame(uncl_obs_5_gamma),
                        data.frame(uncl_obs_7_gamma))
-num_obs_gamma$S_to_s <- mapvalues(num_obs_gamma$S_to_s, 
+num_obs_gamma$S_to_obs <- mapvalues(num_obs_gamma$S_to_obs, 
                                   from = c("M_S1_to_S1", "M_S1_to_S2", "M_S1_to_S3", 
                                            "M_S2_to_S1", "M_S2_to_S2", "M_S2_to_S3",
                                            "M_S3_to_S1", "M_S3_to_S2", "M_S3_to_S3"), 
@@ -774,14 +795,14 @@ num_obs_gamma$S_to_s <- mapvalues(num_obs_gamma$S_to_s,
                                          rep(paste0("gamma[", 2, "][", 1:3, "]"), each = 1), 
                                          rep(paste0("gamma[", 3, "][", 1:3, "]"), each = 1)))
 num_obs_gamma$Nobs <- factor(num_obs_gamma$Nobs, levels = c("3", "5", "7"))
-ggplot(num_obs_gamma, aes(x = Length, y = Abs_bias, color = Nobs, group = Nobs)) +
-  facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 3, labeller = label_parsed) +
+ggplot(num_obs_gamma, aes(x = Length, y = Coverage, color = Nobs, group = Nobs)) +
+  facet_wrap(facets = vars(S_to_obs), nrow = 3, ncol = 3, labeller = label_parsed) +
   geom_point() + geom_line() +  
   xlab("Sequence length") + 
-  ylab("Bias") +
+  ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(-0.50, 0.25)
+  ylim(0, 1)
 
 
 ##############
@@ -796,76 +817,113 @@ ggplot(num_obs_gamma, aes(x = Length, y = Abs_bias, color = Nobs, group = Nobs))
 true_theta_three_obs <- c(0.80, 0.10, 0.10,
                           0.10, 0.80, 0.10,
                           0.10, 0.10, 0.80)
+
+true_theta_three_obs = data_frame(true_theta_three_obs) %>% mutate(c("M_S1_cat1", "M_S1_cat2",  "M_S1_cat3",
+                                                                     "M_S2_cat1", "M_S2_cat2",  "M_S2_cat3", 
+                                                                     "M_S3_cat1", "M_S3_cat2",  "M_S3_cat3"))
+colnames(true_theta_three_obs) <- c("true", "X2")
+
 # Five observations.
 true_theta_five_obs <- c(0.92, 0.02, 0.02, 0.02, 0.02,
                          0.02, 0.47, 0.02, 0.47, 0.02,
                          0.02, 0.02, 0.62, 0.02, 0.32)
+
+true_theta_five_obs = data_frame(true_theta_five_obs) %>% mutate(c("M_S1_cat1", "M_S1_cat2",  "M_S1_cat3", "M_S1_cat4", "M_S1_cat5",
+                                                                     "M_S2_cat1", "M_S2_cat2",  "M_S2_cat3", "M_S2_cat4", "M_S2_cat5",
+                                                                     "M_S3_cat1", "M_S3_cat2",  "M_S3_cat3","M_S3_cat4", "M_S3_cat5"))
+colnames(true_theta_five_obs) <- c("true", "X2")
 
 # Seven observations.
 true_theta_seven_obs <- c(0.76, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04,
                           0.02, 0.45, 0.02, 0.45, 0.02, 0.02, 0.02,
                           0.01, 0.02, 0.31, 0.02, 0.31, 0.02, 0.31)
 
+true_theta_seven_obs = data_frame(true_theta_seven_obs) %>% mutate(c("M_S1_cat1", "M_S1_cat2",  "M_S1_cat3", "M_S1_cat4", "M_S1_cat5", "M_S1_cat6", "M_S1_cat7",
+                                                                     "M_S2_cat1", "M_S2_cat2",  "M_S2_cat3", "M_S2_cat4", "M_S2_cat5", "M_S2_cat6", "M_S2_cat7",
+                                                                     "M_S3_cat1", "M_S3_cat2",  "M_S3_cat3", "M_S3_cat4", "M_S3_cat5", "M_S3_cat6", "M_S3_cat7"))
+colnames(true_theta_seven_obs) <- c("true", "X2")
+
 for (i in 1: length(length_strings)){
   
-  assign(paste0("bias_theta_var_obs_3_t_", length_strings[i]), 
+  assign(paste0("cov_theta_var_obs_3_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_varobs_obs_3_t_", length_strings[i], "$out_sim$emiss_mean"))), 
-               2, true_theta_three_obs)) 
+               2, 0)) 
   
-  assign(paste0("bias_theta_var_obs_3_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_theta_var_obs_3_t_", length_strings[i])))))
+  assign(paste0("cov_theta_var_obs_3_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_theta_var_obs_3_t_", length_strings[i])))))
   
-  assign(paste0("bias_theta_var_obs_3_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_theta_var_obs_3_t_", length_strings[i]))), 
-               Length = length_strings[i], Nobs = "3"))
+  assign(paste0("cov_theta_var_obs_3_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_theta_var_obs_3_t_", length_strings[i]))), 
+               Length = length_strings[i], Nobs = "3", 
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_3_t_", length_strings[i], "$out_sim$emiss_low")))),
+               CIHigh = as.vector(  eval(parse(text = paste0("results$sim_HMM_varobs_obs_3_t_", length_strings[i], "$out_sim$emiss_up"))))))
   
-  assign(paste0("bias_theta_var_obs_5_t_", length_strings[i]), 
+  assign(paste0("cov_theta_var_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_varobs_obs_5_t_", length_strings[i], "$out_sim$emiss_mean"))), 
-               2, true_theta_five_obs)) 
+               2, 0)) 
   
-  assign(paste0("bias_theta_var_obs_5_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_theta_var_obs_5_t_", length_strings[i])))))
+  assign(paste0("cov_theta_var_obs_5_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_theta_var_obs_5_t_", length_strings[i])))))
   
-  assign(paste0("bias_theta_var_obs_5_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_theta_var_obs_5_t_", length_strings[i]))), 
-               Length = length_strings[i], Nobs = "5"))
+  assign(paste0("cov_theta_var_obs_5_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_theta_var_obs_5_t_", length_strings[i]))), 
+               Length = length_strings[i], Nobs = "5", 
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_5_t_", length_strings[i], "$out_sim$emiss_low")))),
+               CIHigh = as.vector(  eval(parse(text = paste0("results$sim_HMM_varobs_obs_5_t_", length_strings[i], "$out_sim$emiss_up"))))))
   
-  assign(paste0("bias_theta_var_obs_7_t_", length_strings[i]), 
+  assign(paste0("cov_theta_var_obs_7_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_varobs_obs_7_t_", length_strings[i], "$out_sim$emiss_mean"))), 
-               2, true_theta_seven_obs)) 
+               2, 0)) 
   
-  assign(paste0("bias_theta_var_obs_7_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_theta_var_obs_7_t_", length_strings[i])))))
+  assign(paste0("cov_theta_var_obs_7_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_theta_var_obs_7_t_", length_strings[i])))))
   
-  assign(paste0("bias_theta_var_obs_7_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_theta_var_obs_7_t_", length_strings[i]))), 
-               Length = length_strings[i], Nobs = "7"))
+  assign(paste0("cov_theta_var_obs_7_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_theta_var_obs_7_t_", length_strings[i]))), 
+               Length = length_strings[i], Nobs = "7", 
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_7_t_", length_strings[i], "$out_sim$emiss_low")))),
+               CIHigh = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_7_t_", length_strings[i], "$out_sim$emiss_up"))))))
   
 }
 
 ### Three observations.
-var_obs_3_theta <- rbind(data.frame(bias_theta_var_obs_3_t_250), data.frame(bias_theta_var_obs_3_t_500),  
-                         data.frame(bias_theta_var_obs_3_t_1000), data.frame(bias_theta_var_obs_3_t_2000), 
-                         data.frame(bias_theta_var_obs_3_t_4000), data.frame(bias_theta_var_obs_3_t_8000))
-colnames(var_obs_3_theta) <- c("Id", "S_to_obs", "Abs_bias", "Length", "Nobs")
+var_obs_3_theta <- rbind(data.frame(cov_theta_var_obs_3_t_250), data.frame(cov_theta_var_obs_3_t_500),  
+                         data.frame(cov_theta_var_obs_3_t_1000), data.frame(cov_theta_var_obs_3_t_2000), 
+                         data.frame(cov_theta_var_obs_3_t_4000), data.frame(cov_theta_var_obs_3_t_8000))
+
+var_obs_3_theta <- full_join(var_obs_3_theta, true_theta_three_obs, by = "X2")
+
+var_obs_3_theta <- var_obs_3_theta %>% mutate(Coverage = ifelse((value > CILow & true < CIHigh),1,0))
+colnames(var_obs_3_theta) <- c("Id", "S_to_obs", "Estimate", "Length", "Nobs","CiLow", "CiHigh","true","Coverage")
+
 var_obs_3_theta$Length <- factor(var_obs_3_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-var_obs_3_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Nobs, var_obs_3_theta, mean)
+var_obs_3_theta <- aggregate(Coverage ~ Length + S_to_obs + Nobs, var_obs_3_theta, mean)
 
 ### Five observations.
-var_obs_5_theta <- rbind(data.frame(bias_theta_var_obs_5_t_250), data.frame(bias_theta_var_obs_5_t_500),  
-                         data.frame(bias_theta_var_obs_5_t_1000), data.frame(bias_theta_var_obs_5_t_2000), 
-                         data.frame(bias_theta_var_obs_5_t_4000), data.frame(bias_theta_var_obs_5_t_8000))
-colnames(var_obs_5_theta) <- c("Id", "S_to_obs", "Abs_bias", "Length", "Nobs")
+var_obs_5_theta <- rbind(data.frame(cov_theta_var_obs_5_t_250), data.frame(cov_theta_var_obs_5_t_500),  
+                         data.frame(cov_theta_var_obs_5_t_1000), data.frame(cov_theta_var_obs_5_t_2000), 
+                         data.frame(cov_theta_var_obs_5_t_4000), data.frame(cov_theta_var_obs_5_t_8000))
+
+var_obs_5_theta <- full_join(var_obs_5_theta, true_theta_five_obs, by = "X2")
+
+var_obs_5_theta <- var_obs_5_theta %>% mutate(Coverage = ifelse((value > CILow & true < CIHigh),1,0))
+colnames(var_obs_5_theta) <- c("Id", "S_to_obs", "Estimate", "Length", "Nobs","CiLow", "CiHigh","true","Coverage")
+
 var_obs_5_theta$Length <- factor(var_obs_5_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-var_obs_5_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Nobs, var_obs_5_theta, mean)
+var_obs_5_theta <- aggregate(Coverage ~ Length + S_to_obs + Nobs, var_obs_5_theta, mean)
 
 ### Seven observations.
-var_obs_7_theta <- rbind(data.frame(bias_theta_var_obs_7_t_250), data.frame(bias_theta_var_obs_7_t_500),  
-                         data.frame(bias_theta_var_obs_7_t_1000), data.frame(bias_theta_var_obs_7_t_2000), 
-                         data.frame(bias_theta_var_obs_7_t_4000), data.frame(bias_theta_var_obs_7_t_8000))
-colnames(var_obs_7_theta) <- c("Id", "S_to_obs", "Abs_bias", "Length", "Nobs")
+var_obs_7_theta <- rbind(data.frame(cov_theta_var_obs_7_t_250), data.frame(cov_theta_var_obs_7_t_500),  
+                         data.frame(cov_theta_var_obs_7_t_1000), data.frame(cov_theta_var_obs_7_t_2000), 
+                         data.frame(cov_theta_var_obs_7_t_4000), data.frame(cov_theta_var_obs_7_t_8000))
+
+var_obs_7_theta <- full_join(var_obs_7_theta, true_theta_seven_obs, by = "X2")
+
+var_obs_7_theta <- var_obs_7_theta %>% mutate(Coverage = ifelse((value > CILow & true < CIHigh),1,0))
+colnames(var_obs_7_theta) <- c("Id", "S_to_obs", "Estimate", "Length", "Nobs","CiLow", "CiHigh","true","Coverage")
+
 var_obs_7_theta$Length <- factor(var_obs_7_theta$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-var_obs_7_theta <- aggregate(Abs_bias ~ Length + S_to_obs + Nobs, var_obs_7_theta, mean)
+var_obs_7_theta <- aggregate(Coverage ~ Length + S_to_obs + Nobs, var_obs_7_theta, mean)
 
 # Plot of bias emission probabilities by number of observations and sequence length.
 var_obs_theta <- rbind(data.frame(var_obs_3_theta), data.frame(var_obs_5_theta),
@@ -883,77 +941,111 @@ var_obs_theta$S_to_obs <- factor(var_obs_theta$S_to_obs, levels = c("theta[1][1]
                                                                     "theta[2][5]", "theta[2][6]", "theta[2][7]",
                                                                     "theta[3][1]", "theta[3][2]", "theta[3][3]", "theta[3][4]", 
                                                                     "theta[3][5]", "theta[3][6]", "theta[3][7]"))
-ggplot(var_obs_theta, aes(x = Length, y = Abs_bias, color = Nobs, group = Nobs)) +
+ggplot(var_obs_theta, aes(x = Length, y = Coverage, color = Nobs, group = Nobs)) +
   facet_wrap(facets = vars(S_to_obs), nrow = 3, ncol = 7, labeller = label_parsed) +
   geom_point() + geom_line() +  
   xlab("Sequence length") + 
-  ylab("Bias") +
+  ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(-0.4, 0.25) 
+  ylim(0.5, 1) 
 
 
 ### Gamma. 
+
+gamma_true <- c(0.80, 0.10, 0.10, 
+                0.10, 0.80, 0.10, 
+                0.10, 0.10, 0.80)
+
+gamma_true = data_frame(gamma_true) %>% mutate(c("M_S1_to_S1", "M_S1_to_S2", "M_S1_to_S3",
+                                                 "M_S2_to_S1", "M_S2_to_S2", "M_S2_to_S3", 
+                                                 "M_S3_to_S1", "M_S3_to_S2", "M_S3_to_S3")) 
+
+colnames(gamma_true) <- c("true", "X2")
+
 for (i in 1: length(length_strings)){
   
-  assign(paste0("bias_gamma_var_obs_3_t_", length_strings[i]), 
+  assign(paste0("cov_gamma_var_obs_3_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_varobs_obs_3_t_", length_strings[i], "$out_sim$gamma_mean"))), 
-               2, gamma_true)) 
+               2, 0)) 
   
-  assign(paste0("bias_gamma_var_obs_3_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_gamma_var_obs_3_t_", length_strings[i])))))
+  assign(paste0("cov_gamma_var_obs_3_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_gamma_var_obs_3_t_", length_strings[i])))))
   
-  assign(paste0("bias_gamma_var_obs_3_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_gamma_var_obs_3_t_", length_strings[i]))), 
-               Length = length_strings[i], Nobs = "3"))
-  
-  assign(paste0("bias_gamma_var_obs_5_t_", length_strings[i]), 
+  assign(paste0("cov_gamma_var_obs_3_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_gamma_var_obs_3_t_", length_strings[i]))), 
+               Length = length_strings[i], Nobs = "3",
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_3_t_", length_strings[i], "$out_sim$gamma_low")))),
+               CIHigh = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_3_t_", length_strings[i], "$out_sim$gamma_up"))))))
+ 
+   
+  assign(paste0("cov_gamma_var_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_varobs_obs_5_t_", length_strings[i], "$out_sim$gamma_mean"))), 
-               2, gamma_true)) 
+               2, 0)) 
   
-  assign(paste0("bias_gamma_var_obs_5_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_gamma_var_obs_5_t_", length_strings[i])))))
+  assign(paste0("cov_gamma_var_obs_5_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_gamma_var_obs_5_t_", length_strings[i])))))
   
-  assign(paste0("bias_gamma_var_obs_5_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_gamma_var_obs_5_t_", length_strings[i]))), 
-               Length = length_strings[i], Nobs = "5"))
+  assign(paste0("cov_gamma_var_obs_5_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_gamma_var_obs_5_t_", length_strings[i]))), 
+               Length = length_strings[i], Nobs = "5",
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_5_t_", length_strings[i], "$out_sim$gamma_low")))),
+               CIHigh = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_5_t_", length_strings[i], "$out_sim$gamma_up"))))))
   
-  assign(paste0("bias_gamma_var_obs_7_t_", length_strings[i]), 
+  
+  assign(paste0("cov_gamma_var_obs_7_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_varobs_obs_7_t_", length_strings[i], "$out_sim$gamma_mean"))), 
-               2, gamma_true)) 
+               2, 0)) 
   
-  assign(paste0("bias_gamma_var_obs_7_t_", length_strings[i]), 
-         melt(eval(parse(text = paste0("bias_gamma_var_obs_7_t_", length_strings[i])))))
+  assign(paste0("cov_gamma_var_obs_7_t_", length_strings[i]), 
+         melt(eval(parse(text = paste0("cov_gamma_var_obs_7_t_", length_strings[i])))))
   
-  assign(paste0("bias_gamma_var_obs_7_t_", length_strings[i]), 
-         cbind(eval(parse(text = paste0("bias_gamma_var_obs_7_t_", length_strings[i]))), 
-               Length = length_strings[i], Nobs = "7"))
+  assign(paste0("cov_gamma_var_obs_7_t_", length_strings[i]), 
+         cbind(eval(parse(text = paste0("cov_gamma_var_obs_7_t_", length_strings[i]))), 
+               Length = length_strings[i], Nobs = "7",
+               CILow = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_7_t_", length_strings[i], "$out_sim$gamma_low")))),
+               CIHigh = as.vector(eval(parse(text = paste0("results$sim_HMM_varobs_obs_7_t_", length_strings[i], "$out_sim$gamma_up"))))))
   
 }
 
 # 3 observations.
-var_obs_3_gamma <- rbind(data.frame(bias_gamma_var_obs_3_t_250), data.frame(bias_gamma_var_obs_3_t_500),  
-                         data.frame(bias_gamma_var_obs_3_t_1000), data.frame(bias_gamma_var_obs_3_t_2000), 
-                         data.frame(bias_gamma_var_obs_3_t_4000), data.frame(bias_gamma_var_obs_3_t_8000))
-colnames(var_obs_3_gamma) <- c("Id", "S_to_s", "Abs_bias", "Length", "Nobs")
+var_obs_3_gamma <- rbind(data.frame(cov_gamma_var_obs_3_t_250), data.frame(cov_gamma_var_obs_3_t_500),  
+                         data.frame(cov_gamma_var_obs_3_t_1000), data.frame(cov_gamma_var_obs_3_t_2000), 
+                         data.frame(cov_gamma_var_obs_3_t_4000), data.frame(cov_gamma_var_obs_3_t_8000))
+
+var_obs_3_gamma <- full_join(var_obs_3_gamma, gamma_true, by = "X2")
+
+var_obs_3_gamma <- var_obs_3_gamma %>% mutate(Coverage = ifelse((true > CILow & true < CIHigh),1,0))
+colnames(var_obs_3_gamma) <- c("Id", "S_to_s", "Estimate", "Length", "Nobs","CiLow", "CiHigh","true","Coverage")
+
 var_obs_3_gamma$Length <- factor(var_obs_3_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-var_obs_3_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, var_obs_3_gamma, mean)
+var_obs_3_gamma <- aggregate(Coverage ~ Length + S_to_s + Nobs, var_obs_3_gamma, mean)
 
 # 5 observations. 
-var_obs_5_gamma <- rbind(data.frame(bias_gamma_var_obs_5_t_250), data.frame(bias_gamma_var_obs_5_t_500),  
-                         data.frame(bias_gamma_var_obs_5_t_1000), data.frame(bias_gamma_var_obs_5_t_2000), 
-                         data.frame(bias_gamma_var_obs_5_t_4000), data.frame(bias_gamma_var_obs_5_t_8000))
-colnames(var_obs_5_gamma) <- c("Id", "S_to_s", "Abs_bias", "Length", "Nobs")
+var_obs_5_gamma <- rbind(data.frame(cov_gamma_var_obs_5_t_250), data.frame(cov_gamma_var_obs_5_t_500),  
+                         data.frame(cov_gamma_var_obs_5_t_1000), data.frame(cov_gamma_var_obs_5_t_2000), 
+                         data.frame(cov_gamma_var_obs_5_t_4000), data.frame(cov_gamma_var_obs_5_t_8000))
+
+var_obs_5_gamma <- full_join(var_obs_5_gamma, gamma_true, by = "X2")
+
+var_obs_5_gamma <- var_obs_5_gamma %>% mutate(Coverage = ifelse((true > CILow & true < CIHigh),1,0))
+colnames(var_obs_5_gamma) <- c("Id", "S_to_s", "Estimate", "Length", "Nobs","CiLow", "CiHigh","true","Coverage")
+
 var_obs_5_gamma$Length <- factor(var_obs_5_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-var_obs_5_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, var_obs_5_gamma, mean)
+var_obs_5_gamma <- aggregate(Coverage ~ Length + S_to_s + Nobs, var_obs_5_gamma, mean)
 
 # 7 observations. 
-var_obs_7_gamma <- rbind(data.frame(bias_gamma_var_obs_7_t_250), data.frame(bias_gamma_var_obs_7_t_500),  
-                         data.frame(bias_gamma_var_obs_7_t_1000), data.frame(bias_gamma_var_obs_7_t_2000), 
-                         data.frame(bias_gamma_var_obs_7_t_4000), data.frame(bias_gamma_var_obs_7_t_8000))
-colnames(var_obs_7_gamma) <- c("Id", "S_to_s", "Abs_bias", "Length", "Nobs")
+var_obs_7_gamma <- rbind(data.frame(cov_gamma_var_obs_7_t_250), data.frame(cov_gamma_var_obs_7_t_500),  
+                         data.frame(cov_gamma_var_obs_7_t_1000), data.frame(cov_gamma_var_obs_7_t_2000), 
+                         data.frame(cov_gamma_var_obs_7_t_4000), data.frame(cov_gamma_var_obs_7_t_8000))
+
+var_obs_7_gamma <- full_join(var_obs_7_gamma, gamma_true, by = "X2")
+
+var_obs_7_gamma <- var_obs_7_gamma %>% mutate(Coverage = ifelse((true > CILow & true < CIHigh),1,0))
+colnames(var_obs_7_gamma) <- c("Id", "S_to_s", "Estimate", "Length", "Nobs","CiLow", "CiHigh","true","Coverage")
+
 var_obs_7_gamma$Length <- factor(var_obs_7_gamma$Length, levels = c("250", "500", "1000", "2000", "4000", "8000"))
-var_obs_7_gamma <- aggregate(Abs_bias ~ Length + S_to_s + Nobs, var_obs_7_gamma, mean)
+var_obs_7_gamma <- aggregate(Coverage ~ Length + S_to_s + Nobs, var_obs_7_gamma, mean)
 
 # Plot of bias transition probabilities by number of observations and sequence length.
 num_obs_gamma <- rbind(data.frame(var_obs_3_gamma), data.frame(var_obs_5_gamma),
@@ -966,24 +1058,24 @@ num_obs_gamma$S_to_s <- mapvalues(num_obs_gamma$S_to_s,
                                          rep(paste0("gamma[", 2, "][", 1:3, "]"), each = 1), 
                                          rep(paste0("gamma[", 3, "][", 1:3, "]"), each = 1)))
 num_obs_gamma$Nobs <- factor(num_obs_gamma$Nobs, levels = c("3", "5", "7"))
-ggplot(num_obs_gamma, aes(x = Length, y = Abs_bias, color = Nobs, group = Nobs)) +
+ggplot(num_obs_gamma, aes(x = Length, y = Coverage, color = Nobs, group = Nobs)) +
   facet_wrap(facets = vars(S_to_s), nrow = 3, ncol = 3, labeller = label_parsed) +
   geom_point() + geom_line() +  
   xlab("Sequence length") + 
-  ylab("Bias") +
+  ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(-0.50, 0.25)
+  ylim(0.5, 1)
 
 ### Save plots to dir. 
 plots.dir.path <- list.files(tempdir(), pattern="rs-graphics", full.names = TRUE); 
 plots.png.paths <- list.files(plots.dir.path, pattern=".png", full.names = TRUE)
-file.copy(from=plots.png.paths, to="C:/Academia/HMM paper/Plots")
+file.copy(from=plots.png.paths, to="/Users/bart-jan/Documents/GitHub/paper-hmm-simulation-study/plots")
 
 plots.png.detials <- file.info(plots.png.paths)
 plots.png.detials <- plots.png.detials[order(plots.png.detials$mtime),]
-sorted.png.names <- gsub(plots.dir.path, "C:/Academia/HMM paper/Plots", row.names(plots.png.detials), fixed=TRUE)
-numbered.png.names <- paste0("C:/Academia/HMM paper/Plots/", 1:length(sorted.png.names), ".png")
+sorted.png.names <- gsub(plots.dir.path, "/Users/bart-jan/Documents/GitHub/paper-hmm-simulation-study/plots", row.names(plots.png.detials), fixed=TRUE)
+numbered.png.names <- paste0("/Users/bart-jan/Documents/GitHub/paper-hmm-simulation-study/plots", 1:length(sorted.png.names), ".png")
 
 # Rename all the .png files as: 1.png, 2.png, 3.png, and so on.
 file.rename(from=sorted.png.names, to=numbered.png.names)
