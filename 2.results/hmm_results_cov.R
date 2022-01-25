@@ -181,7 +181,7 @@ ggplot(obs_5_theta, aes(x = Length, y = Coverage, color = Clarity, group = Clari
   geom_point() + 
   geom_line() +  
   xlab("Sequence length") + 
-  ylab("Bias") +
+  ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
   ylim(0.5, 1) 
@@ -301,7 +301,7 @@ ggplot(obs_5_gamma, aes(x = Length, y = Coverage, color = Clarity, group = Clari
   geom_point() + geom_line() +  
   ggtitle("") +
   xlab("Sequence length") + 
-  ylab("Bias") +
+  ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
   ylim(0.5, 1)
@@ -445,10 +445,10 @@ ggplot(overl_5_theta, aes(x = Length, y = Coverage, color = Overlap, group = Ove
   geom_point() + 
   geom_line() +
   xlab("Sequence length") + 
-  ylab("Bias") +
+  ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0, 1) 
+  ylim(0.5, 1)
 
 
 ### Gamma.
@@ -548,10 +548,10 @@ ggplot(overl_5_gamma, aes(x = Length, y = Coverage, color = Overlap, group = Ove
   geom_point() + 
   geom_line() +  
   xlab("Sequence length") + 
-  ylab("Bias") +
+  ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0.8, 1)
+  ylim(0.5, 1)
 
 
 
@@ -695,10 +695,10 @@ ggplot(uncl_obs_theta, aes(x = Length, y = Coverage, color = Nobs, group = Nobs)
   facet_wrap(facets = vars(S_to_obs), nrow = 3, ncol = 7, labeller = label_parsed) +
   geom_point() + geom_line() +  
   xlab("Sequence length") + 
-  ylab("Bias") +
+  ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0, 1) 
+  ylim(0.5, 1)
 
 
 ### Gamma. 
@@ -802,7 +802,7 @@ ggplot(num_obs_gamma, aes(x = Length, y = Coverage, color = Nobs, group = Nobs))
   ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0, 1)
+  ylim(0.5, 1)
 
 
 ##############
