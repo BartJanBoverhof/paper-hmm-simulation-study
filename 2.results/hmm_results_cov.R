@@ -184,7 +184,8 @@ ggplot(obs_5_theta, aes(x = Length, y = Coverage, color = Clarity, group = Clari
   ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0.5, 1) 
+  ylim(0.5, 1) +
+  ggtitle("Clarity States")
 
 
 
@@ -205,7 +206,7 @@ for (i in 1: length(length_strings)){
   
   assign(paste0("cov_gamma_cl_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_cl_obs_5_t_", length_strings[i], "$out_sim$gamma_mean"))), 
-               2, gamma_true)) 
+               2, 0)) 
   
   assign(paste0("cov_gamma_cl_obs_5_t_", length_strings[i]), 
          melt(eval(parse(text = paste0("cov_gamma_cl_obs_5_t_", length_strings[i])))))
@@ -219,7 +220,7 @@ for (i in 1: length(length_strings)){
   
   assign(paste0("cov_gamma_modcl_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_modcl_obs_5_t_", length_strings[i], "$out_sim$gamma_mean"))), 
-               2, gamma_true)) 
+               2, 0)) 
   
   assign(paste0("cov_gamma_modcl_obs_5_t_", length_strings[i]), 
          melt(eval(parse(text = paste0("cov_gamma_modcl_obs_5_t_", length_strings[i])))))
@@ -235,7 +236,7 @@ for (i in 1: length(length_strings)){
   
   assign(paste0("cov_gamma_uncl_obs_5_t_", length_strings[i]), 
          sweep(eval(parse(text = paste0("results$sim_HMM_theta_uncl_obs_5_t_", length_strings[i], "$out_sim$gamma_mean"))), 
-               2, gamma_true)) 
+               2, 0)) 
   
   assign(paste0("cov_gamma_uncl_obs_5_t_", length_strings[i]), 
          melt(eval(parse(text = paste0("cov_gamma_uncl_obs_5_t_", length_strings[i])))))
@@ -304,7 +305,8 @@ ggplot(obs_5_gamma, aes(x = Length, y = Coverage, color = Clarity, group = Clari
   ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0.5, 1)
+  ylim(0.5, 1)+
+  ggtitle("Clarity States")
 
 
 #########################
@@ -448,7 +450,8 @@ ggplot(overl_5_theta, aes(x = Length, y = Coverage, color = Overlap, group = Ove
   ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0.5, 1)
+  ylim(0.5, 1)+
+  ggtitle("Overlap")
 
 
 ### Gamma.
@@ -551,7 +554,8 @@ ggplot(overl_5_gamma, aes(x = Length, y = Coverage, color = Overlap, group = Ove
   ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0.5, 1)
+  ylim(0.5, 1)+
+  ggtitle("Clarity States")
 
 
 
@@ -698,7 +702,8 @@ ggplot(uncl_obs_theta, aes(x = Length, y = Coverage, color = Nobs, group = Nobs)
   ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0.5, 1)
+  ylim(0.5, 1)+
+  ggtitle("Number observations")
 
 
 ### Gamma. 
@@ -802,7 +807,8 @@ ggplot(num_obs_gamma, aes(x = Length, y = Coverage, color = Nobs, group = Nobs))
   ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0.5, 1)
+  ylim(0.5, 1)+
+  ggtitle("Number observations")
 
 
 ##############
@@ -948,7 +954,8 @@ ggplot(var_obs_theta, aes(x = Length, y = Coverage, color = Nobs, group = Nobs))
   ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0.5, 1) 
+  ylim(0.5, 1)+
+  ggtitle("Varobs")
 
 
 ### Gamma. 
@@ -1065,7 +1072,8 @@ ggplot(num_obs_gamma, aes(x = Length, y = Coverage, color = Nobs, group = Nobs))
   ylab("Coverage") +
   geom_hline(yintercept = 0) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) + 
-  ylim(0.5, 1)
+  ylim(0.5, 1)+
+  ggtitle("Varobs")
 
 ### Save plots to dir. 
 plots.dir.path <- list.files(tempdir(), pattern="rs-graphics", full.names = TRUE); 
