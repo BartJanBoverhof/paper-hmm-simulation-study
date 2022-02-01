@@ -7,25 +7,23 @@
 ###~~~~~~~~~~~~~~~~~~~~~~~~###
 ### Load packages and data ###
 ###~~~~~~~~~~~~~~~~~~~~~~~~###
+search()
 
 ### Load packages.
-## Check if package "data.table" can be required, if not install. 
-if(!require(data.table)) install.packages("data.table")
-## Check if package "reshape" can be required, if not install. 
-if(!require(reshape)) install.packages("reshape")
-## Check if package "ggh4x" can be required, if not install. 
-if(!require(ggh4x)) install.packages("ggh4x")
-## Check if package "tidyverse" can be required, if not install. 
-if(!require(tidyverse)) install.packages("tidyverse")
-## Check if package "gridExtra" can be required, if not install. 
-if(!require(gridExtra)) install.packages("plyr")
-## Check if package "Hmisc" can be required, if not install. 
-if(!require(Hmisc)) install.packages("Hmisc")
-## Check if package "cat" can be required, if not install. 
-if(!require(cat)) install.packages("cat")
-## Require packages.
+## Packages to load. 
 packages <- c("data.table", "reshape", "ggh4x", "tidyverse", "gridExtra", "Hmisc", "cat")
-lapply(packages, library, character.only = TRUE)
+## Package check. 
+package.check <- lapply(
+  packages,
+  FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+    }
+  }
+)
+## Remove associated objects. 
+rm(packages, package.check)
 
 ### Set working directory. 
 setwd("C:\\Academia\\HMM paper\\Data\\Data")
