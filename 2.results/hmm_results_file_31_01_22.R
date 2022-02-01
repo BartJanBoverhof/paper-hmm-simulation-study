@@ -17,30 +17,15 @@ if(!require(reshape)) install.packages("reshape")
 if(!require(ggh4x)) install.packages("ggh4x")
 ## Check if package "tidyverse" can be required, if not install. 
 if(!require(tidyverse)) install.packages("tidyverse")
-## Check if package "plyr" can be required, if not install. 
-if(!require(plyr)) install.packages("plyr")
 ## Check if package "gridExtra" can be required, if not install. 
 if(!require(gridExtra)) install.packages("plyr")
 ## Check if package "Hmisc" can be required, if not install. 
 if(!require(Hmisc)) install.packages("Hmisc")
 ## Check if package "cat" can be required, if not install. 
 if(!require(cat)) install.packages("cat")
-## Require package "data.table".
-library(data.table)
-## Require package "reshape".
-library(reshape)
-## Require package "ggh4x".
-library(ggh4x)
-## Require package "tidyverse".
-library(tidyverse)
-## Require package "plyr".
-library(plyr)
-## Require package "gridExtra".
-library(gridExtra)
-## Require package "Hmisc".
-library(Hmisc)
-## Require package "cat".
-library(cat)
+## Require packages.
+packages <- c("data.table", "reshape", "ggh4x", "tidyverse", "gridExtra", "Hmisc", "cat")
+lapply(packages, library, character.only = TRUE)
 
 ### Set working directory. 
 setwd("C:\\Academia\\HMM paper\\Data\\Data")
