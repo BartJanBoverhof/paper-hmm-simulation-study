@@ -954,7 +954,7 @@ nobs <- c(3, 5, 7)
 ## Specify condition.
 cond <- c("theta_uncl", "theta_uncl", "theta_uncl")
 condition <- c("3", "5", "7")
-cond_string <- c("Number of observations")
+cond_string <- c("Unclear Number of Observations")
 ## Specify true probabilities.
 true_probs <- list(c(0.52, 0.24, 0.24, 0.24, 0.52, 0.24, 0.24, 0.24, 0.52), 
                    c(0.44, 0.14, 0.14, 0.14, 0.14, 0.14, 0.29, 0.14, 0.29, 0.14, 0.14, 0.14, 0.29, 0.14, 0.29), 
@@ -1126,7 +1126,7 @@ nobs <- c(3, 5, 7)
 ## Specify condition.
 cond <- c("theta_uncl", "theta_uncl", "theta_uncl")
 condition <- c("3", "5", "7")
-cond_string <- c("Number of observations")
+cond_string <- c("Unclear Number of Observations")
 ## Calculate the various measures and the associated plots. 
 nobs_uncl_gamma <- calcR_gamma(true_probs = gamma_true, nobs = nobs, cond = cond, condition = condition, cond_string = cond_string, varobs = T)
 
@@ -1250,7 +1250,7 @@ nobs <- c(3, 5, 7)
 ## Specify condition.
 cond <- c("varobs", "varobs", "varobs")
 condition <- c("3", "5", "7")
-cond_string <- c("Number of observations")
+cond_string <- c("Clear Number of Observations")
 ## Specify true probabilities.
 true_probs <- list(c(0.80, 0.10, 0.10, 0.10, 0.80, 0.10, 0.10, 0.10, 0.80), 
                    c(0.92, 0.02, 0.02, 0.02, 0.02, 0.02, 0.47, 0.02, 0.47, 0.02, 0.02, 0.02, 0.62, 0.02, 0.32), 
@@ -1279,7 +1279,7 @@ colnames(temp) <- c("cats", "condition", "true_probs", "cats_n")
 nobs_cl_theta$abs_bias$abs_bias <- full_join(nobs_cl_theta$abs_bias$abs_bias, temp, by = c("cats", "condition"))
 nobs_cl_theta$abs_bias$abs_bias$cats_n <- factor(nobs_cl_theta$abs_bias$abs_bias$cats_n, 
                                                    levels = c("One-indicator state", "Two-indicator state", "Three-indicator state", 
-                                                              "Noise"))
+                                                              "Two-indicator primary state", "Two-indicator secondary state", "Noise"))
 nobs_cl_theta_abs_bias_reduced_plot <- nobs_cl_theta$abs_bias$abs_bias %>%
   group_by(cats_n, length, condition) %>%
   dplyr::summarize(mean = mean(mean_abs_bias), sd = sd(mean_abs_bias)) %>% 
@@ -1315,8 +1315,8 @@ temp <- cbind(temp, c("One-indicator state", "Noise", "Noise", "Noise", "One-ind
 colnames(temp) <- c("cats", "condition", "true_probs", "cats_n")
 nobs_cl_theta$rel_bias$rel_bias <- full_join(nobs_cl_theta$rel_bias$rel_bias, temp, by = c("cats", "condition"))
 nobs_cl_theta$rel_bias$rel_bias$cats_n <- factor(nobs_cl_theta$rel_bias$rel_bias$cats_n, 
-                                                   levels = c("One-indicator state", "Two-indicator state", "Three-indicator state", 
-                                                              "Noise"))
+                                                 levels = c("One-indicator state", "Two-indicator state", "Three-indicator state", 
+                                                            "Two-indicator primary state", "Two-indicator secondary state", "Noise"))
 nobs_cl_theta_rel_bias_reduced_plot <- nobs_cl_theta$rel_bias$rel_bias %>%
   group_by(cats_n, length, condition) %>%
   dplyr::summarize(mean = mean(mean_rel_bias), sd = sd(mean_rel_bias)) %>% 
@@ -1354,8 +1354,8 @@ temp <- cbind(temp, c("One-indicator state", "Noise", "Noise", "Noise", "One-ind
 colnames(temp) <- c("cats", "condition", "true_probs", "cats_n")
 nobs_cl_theta$sdev$sdev <- full_join(nobs_cl_theta$sdev$sdev, temp, by = c("cats", "condition"))
 nobs_cl_theta$sdev$sdev$cats_n <- factor(nobs_cl_theta$sdev$sdev$cats_n, 
-                                           levels = c("One-indicator state", "Two-indicator state", "Three-indicator state", 
-                                                      "Noise"))
+                                         levels = c("One-indicator state", "Two-indicator state", "Three-indicator state", 
+                                                    "Two-indicator primary state", "Two-indicator secondary state", "Noise"))
 nobs_cl_theta_sdev_reduced_plot <- nobs_cl_theta$sdev$sdev %>%
   group_by(cats_n, length, condition) %>%
   dplyr::summarize(mean = mean(mean_sdev), sd = sd(mean_sdev)) %>% 
@@ -1391,8 +1391,8 @@ temp <- cbind(temp, c("One-indicator state", "Noise", "Noise", "Noise", "One-ind
 colnames(temp) <- c("cats", "condition", "true_probs", "cats_n")
 nobs_cl_theta$cov$cov <- full_join(nobs_cl_theta$cov$cov, temp, by = c("cats", "condition"))
 nobs_cl_theta$cov$cov$cats_n <- factor(nobs_cl_theta$cov$cov$cats_n, 
-                                         levels = c("One-indicator state", "Two-indicator state", "Three-indicator state", 
-                                                    "Noise"))
+                                       levels = c("One-indicator state", "Two-indicator state", "Three-indicator state", 
+                                                  "Two-indicator primary state", "Two-indicator secondary state", "Noise"))
 nobs_cl_theta_cov_reduced_plot <- nobs_cl_theta$cov$cov %>%
   group_by(cats_n, length, condition) %>%
   dplyr::summarize(mean = mean(mean_cov), sd = sd(mean_cov)) %>% 
@@ -1422,7 +1422,7 @@ nobs <- c(3, 5, 7)
 ## Specify condition.
 cond <- c("varobs", "varobs", "varobs")
 condition <- c("3", "5", "7")
-cond_string <- c("Number of observations")
+cond_string <- c("Clear Number of Observations")
 ## Calculate the various measures and the associated plots. 
 nobs_cl_gamma <- calcR_gamma(true_probs = gamma_true, nobs = nobs, cond = cond, condition = condition, cond_string = cond_string, varobs = T)
 
