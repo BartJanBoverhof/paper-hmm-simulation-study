@@ -1,10 +1,12 @@
-####################################
-####~~~~~ HMM Paper Code ~~~~~######
-####################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~###
+###~~~~~ HMM Paper Code ~~~~~###
+###~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
-##############################
+## Please press ALT + O (Cmd + Option + O on Mac) to order the script. 
+
+###~~~~~~~~~~~~~~~~~~~~~~~~###
 ### Load packages and data ###
-##############################
+###~~~~~~~~~~~~~~~~~~~~~~~~###
 
 ### Load packages.
 ## Check if package "data.table" can be required, if not install. 
@@ -55,9 +57,9 @@ files <- list.files(pattern = ".rda$")
 results <- Map(rda2list, file.path(files))
 names(results) <- tools::file_path_sans_ext(files)
 
-###############################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 ### Functions & Constant object definitions ###
-###############################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
 ### Supress "friendly" warnings. 
 options(dplyr.summarise.inform = F)
@@ -401,9 +403,9 @@ lengths <- c("250", "500", "1000", "2000", "4000", "8000")
 ### Define the population level transition probabilities, these are held constant over all the conditions. 
 gamma_true <- array(c(c(0.80, 0.10, 0.10), c(0.10, 0.80, 0.10), c(0.10, 0.10, 0.80)), dim = c(1, 9, 1))
 
-#######################################################################################################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 ### Absolute bias, relative bias, and standard error of the emission and transition probabilities clarity condition ###
-#######################################################################################################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
 ### Calculate absolute bias, relative bias, standard deviation, and coverage of emission probabilities of the clarity condition, 
 ### with associated plots. 
@@ -652,9 +654,9 @@ clarity_gamma_cov_combined_plot <- grid.arrange(clarity_gamma$cov$cov_complete_p
 
   }
 
-#######################################################################################################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 ### Absolute bias, relative bias, and standard error of the emission and transition probabilities overlap condition ###
-#######################################################################################################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
 ### Calculate absolute bias, relative bias, standard deviation, and coverage of emission probabilities of the overlap condition, 
 ### with associated plots. 
@@ -666,15 +668,9 @@ cond <- c("theta_nooverl", "theta_modoverl", "theta_muchoverl")
 condition <- c("None", "Moderate", "Much")
 cond_string <- c("Overlap")
 ## Specify true probabilities.
-true_probs <- list(c(0.84, 0.04, 0.04, 0.04, 0.04, 
-                     0.04, 0.44, 0.44, 0.04, 0.04, 
-                     0.04, 0.04, 0.04, 0.44, 0.44), 
-                   c(0.59, 0.29, 0.04, 0.04, 0.04, 
-                     0.04, 0.29, 0.59, 0.04, 0.04, 
-                     0.04, 0.04, 0.20, 0.36, 0.36), 
-                   c(0.44, 0.44, 0.04, 0.04, 0.04, 
-                     0.04, 0.44, 0.44, 0.04, 0.04, 
-                     0.04, 0.04, 0.30, 0.31, 0.31))
+true_probs <- list(c(0.84, 0.04, 0.04, 0.04, 0.04, 0.04, 0.44, 0.44, 0.04, 0.04, 0.04, 0.04, 0.04, 0.44, 0.44), 
+                   c(0.59, 0.29, 0.04, 0.04, 0.04, 0.04, 0.29, 0.59, 0.04, 0.04, 0.04, 0.04, 0.20, 0.36, 0.36), 
+                   c(0.44, 0.44, 0.04, 0.04, 0.04, 0.04, 0.44, 0.44, 0.04, 0.04, 0.04, 0.04, 0.30, 0.31, 0.31))
 ## Calculate the various measures and the associated plots. 
 overlap_theta <- calcR_theta(true_probs = true_probs, nobs = nobs, cond = cond, condition = condition, cond_string = cond_string)
 
@@ -942,9 +938,9 @@ overlap_gamma_cov_combined_plot <- grid.arrange(overlap_gamma$cov$cov_complete_p
 
   }
 
-##############################################################################################################################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 ### Absolute bias, relative bias, and standard error of the emission and transition probabilities unclear number of observations condition ###
-##############################################################################################################################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
 ### Calculate absolute bias, relative bias, standard deviation, and coverage of the emission probabilities for the unclear number 
 ### of observations condition, with associated plots.
@@ -1238,9 +1234,9 @@ nobs_uncl_gamma_cov_combined_plot <- grid.arrange(nobs_uncl_gamma$cov$cov_comple
 
   }
 
-############################################################################################################################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 ### Absolute bias, relative bias, and standard error of the emission and transition probabilities clear number of observations condition ###
-############################################################################################################################################
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
 ### Calculate absolute bias, relative bias, standard deviation, and coverage of the emission probabilities for the clear number 
 ### of observations condition, with associated plots.
@@ -1533,18 +1529,3 @@ nobs_cl_gamma_cov_combined_plot <- grid.arrange(nobs_cl_gamma$cov$cov_complete_p
                                                 nobs_cl_gamma_cov_reduced_plot, ncol = 2)
   
   }
-
-#########################
-### Save plots to dir ###
-#########################
-#plots.dir.path <- list.files(tempdir(), pattern="rs-graphics", full.names = TRUE); 
-#plots.png.paths <- list.files(plots.dir.path, pattern=".png", full.names = TRUE)
-#file.copy(from=plots.png.paths, to="C:/Academia/HMM paper/Plots")
-
-#plots.png.detials <- file.info(plots.png.paths)
-#plots.png.detials <- plots.png.detials[order(plots.png.detials$mtime),]
-#sorted.png.names <- gsub(plots.dir.path, "C:/Academia/HMM paper/Plots", row.names(plots.png.detials), fixed=TRUE)
-#numbered.png.names <- paste0("C:/Academia/HMM paper/Plots/", 1:length(sorted.png.names), ".png")
-
-## Rename all the .png files as: 1.png, 2.png, 3.png, and so on.
-#file.rename(from=sorted.png.names, to=numbered.png.names)
