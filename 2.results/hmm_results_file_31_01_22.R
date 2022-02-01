@@ -77,7 +77,7 @@ calcR_theta <- function(true_probs, nobs, cond, condition, cond_string, varobs =
     abs_cond3 <- cbind(melt(sweep(eval(parse(text = paste0("results$sim_HMM_", cond[3] ,"_obs_", nobs[3] ,"_t_", lengths[i], "$out_sim$emiss_mean"))), 
                         2, unlist(true_probs[3]))), length = lengths[i], condition = condition[3])
     abs_bias <- rbind(abs_bias, abs_cond1, abs_cond2, abs_cond3)
-  }
+    }
   ord <- 1 : (length(levels(abs_bias$X2)) / 3)
   abs_bias <- abs_bias %>%
     dplyr::rename(cats = X2, abs_bias = value) %>%
@@ -369,7 +369,7 @@ calcR_gamma <- function(true_probs, nobs, cond, condition, cond_string, varobs =
                        ci_low = as.vector(eval(parse(text = paste0("results$sim_HMM_", cond[3], "_obs_", nobs[3], "_t_", lengths[i], "$out_sim$gamma_low")))), 
                        ci_high = as.vector(eval(parse(text = paste0("results$sim_HMM_", cond[3], "_obs_", nobs[3], "_t_", lengths[i], "$out_sim$gamma_up")))))
     cov <- rbind(cov, cov_cond1, cov_cond2, cov_cond3)
-  }
+    }
   cov <- cov %>%
     dplyr::rename(cats = X2, cov = value) %>%
     mutate(length = factor(length, levels = c("250", "500", "1000", "2000", "4000", "8000"))) 
