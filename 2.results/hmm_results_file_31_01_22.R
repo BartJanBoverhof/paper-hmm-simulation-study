@@ -2,7 +2,7 @@
 ###~~~~~ HMM Paper Code ~~~~~###
 ###~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
-## Please press ALT + O (Cmd + Option + O on Mac) to order the script. 
+## Please press ALT + O (Cmd + Option + O on Mac) to collapse the script. 
 
 ###~~~~~~~~~~~~~~~~~~~~~~~~###
 ### Load packages and data ###
@@ -161,6 +161,7 @@ calcR_theta <- function(true_probs, nobs, cond, condition, cond_string, varobs =
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
   
   if (varobs == T){
+    
     ### Coverage. 
     cov <- data.frame()
     for (i in 1: length(lengths)){
@@ -208,7 +209,9 @@ calcR_theta <- function(true_probs, nobs, cond, condition, cond_string, varobs =
       labs(color = cond_string) +
       geom_hline(yintercept = 0) +
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
-    } else{
+    
+    } else {
+      
       ### Coverage. 
       cov <- data.frame()
       for (i in 1: length(lengths)){
@@ -251,7 +254,8 @@ calcR_theta <- function(true_probs, nobs, cond, condition, cond_string, varobs =
         labs(color = cond_string) +
         geom_hline(yintercept = 0) +
         theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) 
-      }
+      
+        }
   
   return(list(abs_bias = list(abs_bias = abs_bias, abs_bias_complete_plot = abs_bias_complete_plot), 
               rel_bias = list(rel_bias = rel_bias, rel_bias_complete_plot = rel_bias_complete_plot), 
